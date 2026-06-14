@@ -14,8 +14,8 @@ class Base extends CI_Model
         $this->load->model('Hrmodel');
 
         // $this->load->model('Productmodel');	
-        // $this->load->model('Suppliermodel');
-        // $this->load->model('Customermodel');
+        $this->load->model('Suppliermodel');
+        $this->load->model('Customermodel');
         // $this->load->model('Pomodel');
         // $this->load->model('Storemodel');
         // $this->load->model('Invoicemodel');	

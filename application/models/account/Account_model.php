@@ -25,10 +25,12 @@ class Account_model extends CI_Model {
     // ---------------------------------------------------- Ledgers
     public function get_ledgers() {
         $sql = "
-            SELECT L.*, G.name as group_name, G.type as group_type 
+            SELECT L.*, COALESCE(C.name, S.name, L.name) as name, G.name as group_name, G.type as group_type 
             FROM acc_ledgers L 
             INNER JOIN acc_groups G ON L.group_id = G.id 
-            ORDER BY L.name ASC
+            LEFT JOIN customer C ON L.customer_id = C.id
+            LEFT JOIN supplier S ON L.supplier_id = S.id
+            ORDER BY name ASC
         ";
         return $this->db->query($sql)->result_array();
     }
@@ -109,10 +111,12 @@ class Account_model extends CI_Model {
 
         $sql = "
             SELECT V.*, 
-                   GROUP_CONCAT(CONCAT(L.name, ' (', E.entry_type, ': ', E.amount, ')') SEPARATOR '<br>') as entry_details
+                   GROUP_CONCAT(CONCAT(COALESCE(C.name, S.name, L.name), ' (', E.entry_type, ': ', E.amount, ')') SEPARATOR '<br>') as entry_details
             FROM acc_vouchers V
             INNER JOIN acc_voucher_entries E ON V.id = E.voucher_id
             INNER JOIN acc_ledgers L ON E.ledger_id = L.id
+            LEFT JOIN customer C ON L.customer_id = C.id
+            LEFT JOIN supplier S ON L.supplier_id = S.id
             $where
             GROUP BY V.id
             ORDER BY V.date DESC, V.id DESC
@@ -122,7 +126,13 @@ class Account_model extends CI_Model {
 
     public function get_ledger_statement($ledger_id, $from_date = null, $to_date = null) {
         // Fetch opening balance + sum of Dr/Cr transactions before from_date
-        $ledger = $this->db->get_where('acc_ledgers', array('id' => $ledger_id))->row_array();
+        $ledger = $this->db->query("
+            SELECT L.*, COALESCE(C.name, S.name, L.name) as name
+            FROM acc_ledgers L
+            LEFT JOIN customer C ON L.customer_id = C.id
+            LEFT JOIN supplier S ON L.supplier_id = S.id
+            WHERE L.id = ?
+        ", array($ledger_id))->row_array();
         if (!$ledger) return array();
 
         $opening_bal = floatval($ledger['opening_balance']);
@@ -187,14 +197,16 @@ class Account_model extends CI_Model {
     public function get_trial_balance() {
         $sql = "
             SELECT 
-                L.id, L.name, L.opening_balance, L.opening_type, G.name as group_name,
+                L.id, COALESCE(C.name, S.name, L.name) as name, L.opening_balance, L.opening_type, G.name as group_name,
                 COALESCE(SUM(CASE WHEN E.entry_type = 'Dr' THEN E.amount ELSE 0 END), 0) as dr_total,
                 COALESCE(SUM(CASE WHEN E.entry_type = 'Cr' THEN E.amount ELSE 0 END), 0) as cr_total
             FROM acc_ledgers L
             INNER JOIN acc_groups G ON L.group_id = G.id
+            LEFT JOIN customer C ON L.customer_id = C.id
+            LEFT JOIN supplier S ON L.supplier_id = S.id
             LEFT JOIN acc_voucher_entries E ON L.id = E.ledger_id
             GROUP BY L.id
-            ORDER BY G.name, L.name
+            ORDER BY G.name, name
         ";
         $ledgers = $this->db->query($sql)->result_array();
 
@@ -241,15 +253,17 @@ class Account_model extends CI_Model {
         // Fetch all ledgers that belong to Income (type = 'Income') and Expense (type = 'Expense')
         $sql = "
             SELECT 
-                L.id, L.name, G.type as group_type, L.opening_balance, L.opening_type,
+                L.id, COALESCE(C.name, S.name, L.name) as name, G.type as group_type, L.opening_balance, L.opening_type,
                 COALESCE(SUM(CASE WHEN E.entry_type = 'Dr' THEN E.amount ELSE 0 END), 0) as dr_total,
                 COALESCE(SUM(CASE WHEN E.entry_type = 'Cr' THEN E.amount ELSE 0 END), 0) as cr_total
             FROM acc_ledgers L
             INNER JOIN acc_groups G ON L.group_id = G.id
+            LEFT JOIN customer C ON L.customer_id = C.id
+            LEFT JOIN supplier S ON L.supplier_id = S.id
             LEFT JOIN acc_voucher_entries E ON L.id = E.ledger_id
             WHERE G.type IN ('Income', 'Expense')
             GROUP BY L.id
-            ORDER BY G.type, L.name
+            ORDER BY G.type, name
         ";
         $ledgers = $this->db->query($sql)->result_array();
 
@@ -297,15 +311,17 @@ class Account_model extends CI_Model {
         // Assets and Liabilities
         $sql = "
             SELECT 
-                L.id, L.name, G.type as group_type, L.opening_balance, L.opening_type,
+                L.id, COALESCE(C.name, S.name, L.name) as name, G.type as group_type, L.opening_balance, L.opening_type,
                 COALESCE(SUM(CASE WHEN E.entry_type = 'Dr' THEN E.amount ELSE 0 END), 0) as dr_total,
                 COALESCE(SUM(CASE WHEN E.entry_type = 'Cr' THEN E.amount ELSE 0 END), 0) as cr_total
             FROM acc_ledgers L
             INNER JOIN acc_groups G ON L.group_id = G.id
+            LEFT JOIN customer C ON L.customer_id = C.id
+            LEFT JOIN supplier S ON L.supplier_id = S.id
             LEFT JOIN acc_voucher_entries E ON L.id = E.ledger_id
             WHERE G.type IN ('Asset', 'Liability')
             GROUP BY L.id
-            ORDER BY G.type, L.name
+            ORDER BY G.type, name
         ";
         $ledgers = $this->db->query($sql)->result_array();
 
@@ -354,15 +370,17 @@ class Account_model extends CI_Model {
     public function get_cash_bank_balances() {
         $sql = "
             SELECT 
-                L.name, L.opening_balance, L.opening_type,
+                COALESCE(C.name, S.name, L.name) as name, L.opening_balance, L.opening_type,
                 COALESCE(SUM(CASE WHEN E.entry_type = 'Dr' THEN E.amount ELSE 0 END), 0) as dr_total,
                 COALESCE(SUM(CASE WHEN E.entry_type = 'Cr' THEN E.amount ELSE 0 END), 0) as cr_total
             FROM acc_ledgers L
             INNER JOIN acc_groups G ON L.group_id = G.id
+            LEFT JOIN customer C ON L.customer_id = C.id
+            LEFT JOIN supplier S ON L.supplier_id = S.id
             LEFT JOIN acc_voucher_entries E ON L.id = E.ledger_id
             WHERE G.id IN (12, 13) -- Cash-in-hand (12), Bank Accounts (13)
             GROUP BY L.id
-            ORDER BY L.name ASC
+            ORDER BY name ASC
         ";
         $results = $this->db->query($sql)->result_array();
         
@@ -379,10 +397,12 @@ class Account_model extends CI_Model {
     public function get_recent_vouchers($limit = 5) {
         $sql = "
             SELECT V.*, 
-                   GROUP_CONCAT(CONCAT(L.name, ' (', E.entry_type, ': ', E.amount, ')') SEPARATOR '<br>') as entry_details
+                   GROUP_CONCAT(CONCAT(COALESCE(C.name, S.name, L.name), ' (', E.entry_type, ': ', E.amount, ')') SEPARATOR '<br>') as entry_details
             FROM acc_vouchers V
             INNER JOIN acc_voucher_entries E ON V.id = E.voucher_id
             INNER JOIN acc_ledgers L ON E.ledger_id = L.id
+            LEFT JOIN customer C ON L.customer_id = C.id
+            LEFT JOIN supplier S ON L.supplier_id = S.id
             GROUP BY V.id
             ORDER BY V.date DESC, V.id DESC
             LIMIT ?
@@ -426,11 +446,13 @@ class Account_model extends CI_Model {
     public function get_expense_breakdown($from_date, $to_date) {
         $sql = "
             SELECT 
-                L.name,
+                COALESCE(C.name, S.name, L.name) as name,
                 COALESCE(SUM(CASE WHEN E.entry_type = 'Dr' THEN E.amount ELSE -E.amount END), 0) as amount
             FROM acc_voucher_entries E
             INNER JOIN acc_vouchers V ON E.voucher_id = V.id
             INNER JOIN acc_ledgers L ON E.ledger_id = L.id
+            LEFT JOIN customer C ON L.customer_id = C.id
+            LEFT JOIN supplier S ON L.supplier_id = S.id
             INNER JOIN acc_groups G ON L.group_id = G.id
             WHERE G.id IN (18, 19) AND V.date BETWEEN ? AND ?
             GROUP BY L.id
@@ -444,17 +466,19 @@ class Account_model extends CI_Model {
         $sql = "
             SELECT 
                 L.id,
-                L.name,
+                COALESCE(C.name, S.name, L.name) as name,
                 L.opening_balance,
                 L.opening_type,
                 COALESCE(SUM(CASE WHEN E.entry_type = 'Cr' THEN E.amount ELSE 0 END), 0) as total_purchase,
                 COALESCE(SUM(CASE WHEN E.entry_type = 'Dr' THEN E.amount ELSE 0 END), 0) as total_payment
             FROM acc_ledgers L
             INNER JOIN acc_groups G ON L.group_id = G.id
+            LEFT JOIN customer C ON L.customer_id = C.id
+            LEFT JOIN supplier S ON L.supplier_id = S.id
             LEFT JOIN acc_voucher_entries E ON L.id = E.ledger_id
             WHERE G.id = 8 OR G.parent_id = 8
             GROUP BY L.id
-            ORDER BY L.name ASC
+            ORDER BY name ASC
         ";
         $results = $this->db->query($sql)->result_array();
         foreach ($results as &$r) {
@@ -477,17 +501,19 @@ class Account_model extends CI_Model {
         $sql = "
             SELECT 
                 L.id,
-                L.name,
+                COALESCE(C.name, S.name, L.name) as name,
                 L.opening_balance,
                 L.opening_type,
                 COALESCE(SUM(CASE WHEN E.entry_type = 'Dr' THEN E.amount ELSE 0 END), 0) as total_sales,
                 COALESCE(SUM(CASE WHEN E.entry_type = 'Cr' THEN E.amount ELSE 0 END), 0) as total_received
             FROM acc_ledgers L
             INNER JOIN acc_groups G ON L.group_id = G.id
+            LEFT JOIN customer C ON L.customer_id = C.id
+            LEFT JOIN supplier S ON L.supplier_id = S.id
             LEFT JOIN acc_voucher_entries E ON L.id = E.ledger_id
             WHERE G.id = 11 OR G.parent_id = 11
             GROUP BY L.id
-            ORDER BY L.name ASC
+            ORDER BY name ASC
         ";
         $results = $this->db->query($sql)->result_array();
         foreach ($results as &$r) {
