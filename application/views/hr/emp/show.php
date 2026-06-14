@@ -3,85 +3,10 @@
         <!-- ============ Body content start ============= -->
         <div class="main-content">
                 <div class="breadcrumb">
-                
-                                  <?php
-                                    $canEdit = $this->Company->checkPermission3("Hr/show_all_unit");
-                                    $defaultUnit = '';
-
-                                    if(!$canEdit){
-                                        $login_emp_code = $this->session->userdata('login_emp_code');
-                                        $basicDetails   = $this->Hrmodel->get_emp_details_with_emp_code($login_emp_code);
-                                        $defaultUnit    = $basicDetails[0]['company_role'] ?? '';
-                                    }
-
-                                    $menuaccess = $this->Base->get_menu_access_of_role() ?? [];
-                                    $visibleCompanies = [];
-
-                                    if ($canEdit) {
-                                        // edit mode → sab companies
-                                        $visibleCompanies = $con;
-                                    } elseif (!empty($menuaccess)) {
-                                        // view mode → sirf allowed companies
-                                        foreach ($con as $c) {
-                                            if (in_array($c['name'], $menuaccess, true)) {
-                                                $visibleCompanies[] = $c;
-                                            }
-                                        }
-                                    } elseif ($defaultUnit) {
-                                        // fallback → default unit
-                                        $visibleCompanies[] = ['name' => $defaultUnit];
-                                    }
-                                    ?>
-
-                                   <div class="col-md-1">
-                                        <label>Payroll Unit</label>
-                                        <select class="form-control" name="company_role1" id="company_role1">
-
-                                            <?php if ($canEdit): ?>
-                                                <option value="">All Payroll Units</option>
-
-                                                <?php foreach ($visibleCompanies as $d): ?>
-                                                    <option value="<?= htmlspecialchars($d['name']) ?>" selected>
-                                                        <?= htmlspecialchars($d['display_name']) ?>
-                                                    </option>
-                                                <?php endforeach; ?>
-
-                                            <?php else: ?>
-
-                                                <?php if (!empty($visibleCompanies)): ?>
-                                                    <?php foreach ($visibleCompanies as $d): ?>
-                                                        <option value="<?= htmlspecialchars($d['name']) ?>" selected>
-                                                            <?= htmlspecialchars($d['display_name']) ?>
-                                                        </option>
-                                                    <?php endforeach; ?>
-                                                <?php else: ?>
-                                                    <option value="<?= htmlspecialchars($defaultUnit) ?>" selected>
-                                                        <?= htmlspecialchars($defaultUnit) ?>
-                                                    </option>
-                                                <?php endif; ?>
-
-                                            <?php endif; ?>
-
-                                        </select>
-                                    </div>
-
-                               
-
-
-                                        <div class="col-md-1" >
-                                            <label >Working Unit</label>
-                                            <select class="form-control" id="search_plant" >
-                                            	<option value="">All</option>
-                                               <?php 
-                                               	foreach($con as $d)
-												{
-											   		?>
-                                               			<option   value="<?php echo $d['name'];?>"><?php echo $d['display_name'];?></option>
-                                               		<?php 
-											   	}
-											   ?>
-                                            </select>
-                                        </div>
+                                        
+                                        <?php
+                                            $this->Hrmodel->all_unit_filter();//payroll units filter
+                                        ?>
                                         
                                         <div class="col-md-1">
                                             <label >Emp code</label>

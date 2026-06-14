@@ -1,4 +1,4 @@
-
+<?php /*
         <!-- ============ Body content start ============= -->
         <div class="main-content">
                 <div class="breadcrumb">
@@ -215,3 +215,160 @@ $(function () {
 
 <?php $this->load->view('js/hr_js');?>
 
+*/?>
+
+<div class="main-content">
+    <div class="breadcrumb">
+        <h1>Employee Documents Upload</h1>
+    </div>
+
+    <div class="separator-breadcrumb border-top"></div>
+
+    <!-- EMP CODE TOP -->
+    <div class="row mb-3">
+        <div class="col-md-4">
+            <label>Emp Code</label>
+            <input type="text" class="form-control" id="emp_code">
+        </div>
+    </div>
+
+    <div class="row" id="docContainer"></div>
+</div>
+
+<script>
+$(function () {
+
+    const docs = [
+        {type:'profile_pic', label:'DP', accept:'image/*'},
+        {type:'epf_photo', label:'EPF', accept:'image/*,application/pdf'},
+        {type:'esi_photo', label:'ESI', accept:'image/*,application/pdf'},
+        {type:'adhar_photo', label:'Aadhar', accept:'image/*,application/pdf'},
+        {type:'bank_photo', label:'Bank', accept:'image/*,application/pdf'},
+        {type:'other_id_photo', label:'PAN', accept:'image/*,application/pdf'},
+        {type:'resume_photo', label:'Resume', accept:'.pdf,.doc,.docx'},
+        {type:'other_docs_photo', label:'Other 1', accept:'image/*,application/pdf'},
+        {type:'other_docs2_photo', label:'Other 2', accept:'image/*,application/pdf'},
+        {type:'other_docs3_photo', label:'Other 3', accept:'image/*,application/pdf'},
+        {type:'other_docs4_photo', label:'Other 4', accept:'image/*,application/pdf'}
+    ];
+
+    // CREATE UI
+    docs.forEach(d => {
+
+        let html = `
+        <div class="col-md-3 mb-4">
+            <div class="card p-2">
+                <h6>${d.label}</h6>
+
+                <input type="file" class="form-control fileInput" data-type="${d.type}" accept="${d.accept}">
+
+                <img class="preview mt-2" style="max-width:100%;display:none;">
+
+                <div class="progress mt-2" style="height:15px; display:none;">
+                    <div class="progress-bar" style="width:0%">0%</div>
+                </div>
+
+                <button class="btn btn-success btn-sm mt-2 uploadBtn" data-type="${d.type}">
+                    Upload
+                </button>
+            </div>
+        </div>`;
+
+        $('#docContainer').append(html);
+    });
+
+
+    // PREVIEW
+    $(document).on('change', '.fileInput', function () {
+        let file = this.files[0];
+        let preview = $(this).closest('.card').find('.preview');
+
+        if (!file) return;
+
+        if (file.type.startsWith('image/')) {
+            let reader = new FileReader();
+            reader.onload = e => {
+                preview.attr('src', e.target.result).show();
+            };
+            reader.readAsDataURL(file);
+        } else {
+            preview.hide();
+        }
+    });
+
+
+    // UPLOAD
+    $(document).on('click', '.uploadBtn', function () {
+
+        let card = $(this).closest('.card');
+        let fileInput = card.find('.fileInput')[0];
+        let file = fileInput.files[0];
+        let type = $(this).data('type');
+        let emp_code = $('#emp_code').val();
+
+        if (!emp_code) {
+            fun_message('error','Error','Enter Emp Code','toast-bottom-right');
+            return;
+        }
+
+        if (!file) {
+            fun_message('error','Error','Select file first','toast-bottom-right');
+            return;
+        }
+
+        let formData = new FormData();
+        formData.append('emp_code', emp_code);
+        formData.append('type', type);
+        formData.append('img1', file);
+
+        let progressBox = card.find('.progress');
+        let progressBar = card.find('.progress-bar');
+
+        progressBox.show();
+        progressBar.css('width','0%').text('0%');
+
+        $.ajax({
+            url: "<?= base_url('index.php/Hr/emp_dp_save2');?>",
+            type: "POST",
+            data: formData,
+            processData: false,
+            contentType: false,
+            dataType: 'json',
+
+            xhr: function () {
+                let xhr = new window.XMLHttpRequest();
+                xhr.upload.addEventListener("progress", function (e) {
+                    if (e.lengthComputable) {
+                        let percent = Math.round((e.loaded / e.total) * 100);
+                        progressBar.css('width', percent + '%').text(percent + '%');
+                    }
+                });
+                return xhr;
+            },
+
+            success: function (res) {
+                if (res.status === 'success') {
+                    fun_message('success','Success','Uploaded','toast-bottom-right');
+                    fileInput.value = '';
+                    card.find('.preview').hide();
+                } else {
+                    fun_message('error','Error',res.message,'toast-bottom-right');
+                }
+            },
+
+            error: function () {
+                fun_message('error','Error','Upload failed','toast-bottom-right');
+            },
+
+            complete: function () {
+                setTimeout(() => {
+                    progressBox.hide();
+                }, 1500);
+            }
+        });
+
+    });
+
+});
+
+</script>

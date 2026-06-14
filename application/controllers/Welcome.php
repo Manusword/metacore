@@ -220,6 +220,14 @@ class Welcome extends CI_Controller {
 	}//function close
 
 
+		//------hr dashboard   
+	public function hr3()
+	{
+		$result['data']= '';
+		$this->load->view('main/dashboard/hr3',$result);
+	}//function close
+
+
 	
 	
 	

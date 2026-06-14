@@ -193,6 +193,171 @@
 
 
 
+<style>
+/* Make top navigation bar menu items compact for ERP departments */
+.layout-horizontal-bar .header-topnav .topnav a,
+.layout-horizontal-bar .header-topnav .topnav label {
+    padding: 10px 16px !important;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    color: #2b303a !important;
+    height: 44px !important;
+    transition: all 0.25s ease !important;
+    position: relative;
+}
+
+.layout-horizontal-bar .header-topnav .topnav ul.menu > li > div > a,
+.layout-horizontal-bar .header-topnav .topnav ul.menu > li > div > div {
+    margin: 0 4px !important;
+    height: 44px !important;
+}
+
+.layout-horizontal-bar .header-topnav .topnav ul.menu {
+    height: 44px !important;
+}
+
+.layout-horizontal-bar .header-topnav {
+    top: 60px !important;
+    background-color: #ffffff !important;
+    border-top: 2px solid #2ea63b !important; /* Elegant green top bar */
+    border-bottom: 1px solid #eef0f3 !important;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02) !important;
+}
+
+.layout-horizontal-bar .header-topnav .topnav ul li ul li a {
+    padding: 10px 15px !important;
+    font-size: 13px !important;
+    font-weight: 500 !important;
+    height: auto !important;
+}
+
+.layout-horizontal-bar .header-topnav .topnav ul ul {
+    top: 44px !important;
+    border: 1px solid #eef0f3 !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08) !important;
+    border-radius: 6px !important;
+}
+
+.layout-horizontal-bar .header-topnav .topnav .nav-icon {
+    margin-right: 4px !important;
+    font-size: 14px !important;
+}
+
+/* Premium bottom line indicator on hover (No blocky background) */
+.layout-horizontal-bar .header-topnav .topnav ul.menu > li > div > a:after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 15%;
+    width: 70%;
+    height: 3px;
+    background-color: #e37209 !important; /* Orange line */
+    transform: scaleX(0);
+    transition: transform 0.25s ease;
+}
+
+.layout-horizontal-bar .header-topnav .topnav ul.menu > li:hover > div > a:after {
+    transform: scaleX(1);
+}
+
+.layout-horizontal-bar .header-topnav .topnav ul.menu > li:hover > div > a {
+    color: #e37209 !important;
+    background-color: transparent !important;
+}
+
+.layout-horizontal-bar .header-topnav .topnav ul.menu > li:hover > div > a i {
+    color: #e37209 !important;
+}
+
+/* Secondary dropdown hover */
+.layout-horizontal-bar .header-topnav .topnav ul li ul li:hover a {
+    color: #2ea63b !important;
+    background-color: #f7f9f8 !important;
+}
+
+/* Main header override: Sleek Matte Black */
+.layout-horizontal-bar .main-header {
+    background-color: #1b1c22 !important; /* Premium Dark Slate */
+    border-bottom: 2px solid #e37209 !important; /* Orange accent */
+    color: #ffffff !important;
+    height: 60px !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08) !important;
+}
+
+/* Align logo and elements to 60px height */
+.layout-horizontal-bar .main-header .logo {
+    height: 44px !important;
+}
+.layout-horizontal-bar .main-header .logo img {
+    height: 100% !important;
+    width: auto !important;
+    margin: 0 !important;
+}
+
+.layout-horizontal-bar .main-header .menu-toggle div {
+    background: #ffffff !important;
+}
+
+.layout-horizontal-bar .main-header h3 {
+    color: #ffffff !important;
+    font-size: 1.15rem !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.5px !important;
+}
+
+.layout-horizontal-bar .main-header .user {
+    color: #ffffff !important;
+    font-weight: 500 !important;
+}
+
+.layout-horizontal-bar .main-header .header-part-right i {
+    color: #ffffff !important;
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    border-radius: 50% !important;
+}
+
+.layout-horizontal-bar .main-header .header-part-right i:hover {
+    background-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+/* Content layout margin matching */
+.layout-horizontal-bar .main-content-wrap {
+    margin-top: 112px !important;
+}
+
+/* Button & Badge branding overrides */
+.btn-primary {
+    background-color: #e37209 !important;
+    border-color: #e37209 !important;
+    border-radius: 4px !important;
+    font-weight: 600 !important;
+    box-shadow: 0 4px 10px rgba(227, 114, 9, 0.15) !important;
+}
+.btn-primary:hover {
+    background-color: #c96205 !important;
+    border-color: #c96205 !important;
+}
+.btn-success {
+    background-color: #2ea63b !important;
+    border-color: #2ea63b !important;
+    border-radius: 4px !important;
+    font-weight: 600 !important;
+    box-shadow: 0 4px 10px rgba(46, 166, 59, 0.15) !important;
+}
+.btn-success:hover {
+    background-color: #248c30 !important;
+    border-color: #248c30 !important;
+}
+
+.badge-primary {
+    background-color: #e37209 !important;
+}
+.badge-warning {
+    background-color: #2ea63b !important;
+    color: white !important;
+}
+</style>
+
 <body class="text-left">
     <div class="app-admin-wrap layout-horizontal-bar">
          <div class="main-header" style="background-color:<?php if(isset($design[0]['design1_bg_color'])){echo $design[0]['design1_bg_color'];}else{echo "red";}?>; color:<?php if(isset($design[0]['design1_ft_color'])){echo $design[0]['design1_ft_color'];}else{echo "white";}?>;">

@@ -334,15 +334,16 @@ class Hr extends CI_Controller {
 							$bgColor='red';
 						}
 
-						 
 						?>
 							<tr style="min-height:25px">
 									<td><?php echo $i;?></td>
 									<td style="width:110px"><input type="text" class="form-control emp_entry_at" id="dayentry_<?php echo $i;?>" onkeyup="checkvalidation(this.id); addPresent();"  max="2" maxlength="2" style="<?php if(isset($bg_color))echo $bg_color;?>"  name="d1[]"   autocomplete="off" value="<?php if(isset($emp_at_day1))echo $emp_at_day1;?>"></td>
 									<td style="width:110px"><input type="text" class="form-control emp_entry_ot" id="otentry_<?php echo $i;?>" onkeyup="checkvalidation2(this.id)"  max="4" maxlength="4" style="<?php //if(isset($bg_color))echo $bg_color;?>"  name="o1[]"   autocomplete="off" value="<?php if(isset($emp_ot_day1))echo $emp_ot_day1;?>"></td>
 									
-									<td style="width:100px"><input type="time" class="form-control intime" id="intime_<?php echo $i;?>"    name="intime[]"   autocomplete="off" value="<?php if(isset($intime1))echo $intime1;?>"></td>
-									<td style="width:100px"><input type="time" class="form-control outtime" id="outtime_<?php echo $i;?>"     name="outtime[]"   autocomplete="off" value="<?php if(isset($outtime1))echo $outtime1;?>"></td>
+									<td style="width:100px"><input type="time" class="form-control intime" id="intime_<?php echo $i;?>"    name="intime[]"   autocomplete="off" value="<?php if(isset($intime1) and $intime1 != '00:00:00')echo $intime1;?>"></td>
+									
+									<td style="width:100px"><input type="time" class="form-control outtime" id="outtime_<?php echo $i;?>"     name="outtime[]"   autocomplete="off" value="<?php if(isset($outtime1) and $outtime1 != '00:00:00')echo $outtime1;?>"></td>
+
 									<td style="width:80px"><input type="text" class="form-control shift" id="shift_<?php echo $i;?>" onkeyup="checkvalidation4(this.id)"     name="shift[]"   autocomplete="off" value="<?php if(isset($shift1))echo $shift1;?>"></td>
 									
 									
@@ -376,8 +377,20 @@ class Hr extends CI_Controller {
 							<td></td>
 							<td>Total Present : <span id='showTotalPresent'><?php echo $total_present;?></span></td>
 							<td></td><td></td><td></td><td></td>
-							<td><span id='showTotalsysHrs'><?php echo round($total_hrs,2);?></span></td>
-							<td><span id='showTotalsysMin'><?php echo $total_min2;?></span></td>
+							<td>
+								<span id='showTotalsysHrs'><?php echo round($total_hrs,2);?></span>
+							</td>
+							<td>
+								Min: <span id='showTotalsysMin'><?php echo $total_min2;?></span>
+								<br>
+								Days: <span id='showTotalsysMinDay'>
+									<?php 
+									if($late_punch_add == "Yes"){
+										echo round($total_min2/60/12,1);
+									}
+									?>
+								</span>
+							</td>
 							<td style='color:blue'><span id='showTotalmcMin'><?php echo $total_min;?></span></td>
 						</tr>
 						</table>  
@@ -1141,14 +1154,18 @@ class Hr extends CI_Controller {
 
 	public function emp_list()
 	{
+		//$result['dept']=$this->Base->get_hr_dept();
+		//$result['con']=$this->Base->get_all_contractor_code();
 		$result['dept']=$this->Base->get_hr_dept();
-		$result['con']=$this->Base->get_all_contractor_code();
+		// $result['conMaster']=$this->Base->get_payroll_master();
+		// $result['con']=$this->Base->get_payroll_contractor();
+		// $result['con2']=$this->Base->get_all_contractor_code();
 		
 		$where=" ";
 		if(isset($_REQUEST['search1']))
 		{
 			if(!empty($_REQUEST['name'])){$name=$_REQUEST['name'];$where.=" and  B.first_name like '$name%' ";}
-			if(!empty($_REQUEST['company_role'])){$company_role=$_REQUEST['company_role'];$where.=" and  B.company_role = '$company_role' ";}
+			//if(!empty($_REQUEST['company_role'])){$company_role=$_REQUEST['company_role'];$where.=" and  B.company_role = '$company_role' ";}
 			if(!empty($_REQUEST['mob'])){$mob=$_REQUEST['mob'];$where.=" and  B.mob='$mob' ";}
 			if(!empty($_REQUEST['emp_id'])){$emp_id=$_REQUEST['emp_id'];$where.=" and  B.emp_code='$emp_id'   ";}
 			if(!empty($_REQUEST['bio_id'])){$bio_id=$_REQUEST['bio_id'];$where.=" and  B.bio_code='$bio_id'   ";}
@@ -1157,10 +1174,25 @@ class Hr extends CI_Controller {
 			if(!empty($_REQUEST['staff'])){$staff=$_REQUEST['staff'];$where.=" and  B.staff_tech='$staff'   ";}
 			if(!empty($_REQUEST['active'])){$active=$_REQUEST['active'];$where.=" and  B.active='$active'   ";}
 			if(!empty($_REQUEST['shift_status'])){$shift_status=$_REQUEST['shift_status'];$where.=" and  B.shift_status='$shift_status'   ";}
-			if(!empty($_REQUEST['search_plant'])){$search_plant=$_REQUEST['search_plant'];$where.=" and  B.plant='$search_plant'   ";}
+			//if(!empty($_REQUEST['search_plant'])){$search_plant=$_REQUEST['search_plant'];$where.=" and  B.plant='$search_plant'   ";}
 			if(!empty($_REQUEST['current_shift'])){$current_shift=$_REQUEST['current_shift'];$where.=" and  B.current_shift='$current_shift'   ";}
 			if(!empty($_REQUEST['mater_roll'])){$mater_roll=$_REQUEST['mater_roll'];$where.=" and  B.mater_roll='$mater_roll'   ";}
 			if(!empty($_REQUEST['report_type1'])){$report_type1=(int)$_REQUEST['report_type1'];}else{$report_type1=1;}
+
+			$company_role = $_REQUEST['company_role'] ?? [];
+			if (!empty($company_role) && is_array($company_role)) {
+				$company_role = array_map('trim', $company_role);
+				$role_list = "'" . implode("','", $company_role) . "'";
+				$where .= " AND B.company_role IN ($role_list) ";
+			}
+
+			$search_plant = $_REQUEST['search_plant'] ?? [];
+			if (!empty($search_plant) && is_array($search_plant)) {
+				$search_plant = array_map('trim', $search_plant);
+				$role_list2 = "'" . implode("','", $search_plant) . "'";
+				$where .= " AND B.plant IN ($role_list2) ";
+			}
+
 
 			if (!empty($_REQUEST['doj1'])) {
 				$doj1 = $_REQUEST['doj1']; // format: YYYY-MM
@@ -6109,6 +6141,7 @@ public function add_full_final()
 			if(isset($_REQUEST['report_type'])){$report_type=$_REQUEST['report_type'];}else{$report_type='1';}
 
 			if(!empty($_REQUEST['name'])){$name=$_REQUEST['name'];$where.=" and  B.first_name like '$name%' ";}
+			
 			$company_role = $_REQUEST['company_role'] ?? [];
 			if (!empty($company_role) && is_array($company_role)) {
 				$company_role = array_map('trim', $company_role);
@@ -6116,7 +6149,14 @@ public function add_full_final()
 				$where .= " AND B.company_role IN ($role_list) ";
 			}
 
-			if(!empty($_REQUEST['search_plant'])){$search_plant=$_REQUEST['search_plant'];$where.=" and  B.plant='$search_plant' ";}
+			$search_plant = $_REQUEST['search_plant'] ?? [];
+			if (!empty($search_plant) && is_array($search_plant)) {
+				$search_plant = array_map('trim', $search_plant);
+				$role_list2 = "'" . implode("','", $search_plant) . "'";
+				$where .= " AND B.plant IN ($role_list2) ";
+			}
+
+			
 			if(!empty($_REQUEST['mob'])){$mob=$_REQUEST['mob'];$where.=" and  B.mob='$mob' ";}
 			if(!empty($_REQUEST['emp_id'])){$emp_id=$_REQUEST['emp_id'];$where.=" and  B.emp_code='$emp_id'   ";}
 			if(!empty($_REQUEST['bio_id'])){$bio_id=$_REQUEST['bio_id'];$where.=" and  B.bio_code='$bio_id'   ";}
@@ -6191,8 +6231,7 @@ public function add_full_final()
 				$this->load->view('hr/report/esi', $result);
 			}
 			elseif($report_type==9){
-				$firtUnit = implode(",", $company_role);
-				$result['rows'] = $this->Hrmodel ->get_employees_without_attendance($year, $month, $firtUnit,$active); //only this in where
+				$result['rows'] = $this->Hrmodel ->get_employees_without_attendance($year, $month, $company_role,$search_plant,$active); //only this in where
                 $this->load->view('hr/report/no_att', $result);
 			}
 			elseif($report_type==10){

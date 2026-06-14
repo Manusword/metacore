@@ -70,21 +70,21 @@ th{
                 <td><?= $i++ ?></td>
 
                 <td>
-                    <?= $r['emp_code'] ?><br>
+                    <?= $r['emp_code'] ?>
                 </td>
                 <td>
                     <?= $r['bio_code'] ?>
                 </td>
 
                 <td class="text-left" <?php if($r['active'] == 'Deactive') echo "style='background-color:red;' " ; ?>>
-                    <?= $r['first_name'].' '.$r['last_name'] ?><br>
+                    <?= $r['first_name'].' '.$r['last_name'] ?>
                 </td>
                 <td class="text-left">
                     <?= $r['father_name'] ?>
                 </td>
 
                 <td>
-                    <?= $r['department'] ?><br>
+                    <?= $r['department'] ?>
                 </td>
                 <td>
                     <?= $r['designation'] ?>

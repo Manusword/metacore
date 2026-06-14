@@ -1548,6 +1548,15 @@ function getNextEmpcode(company_role) {
 
     let total_ctc = basic_salary + hra + conv + city_comp + other_allow + spl_pay + medi_rem + fuel_reimb + get_attendance_all + get_el_encashment + get_cl_encashment + get_other1 + get_other2 + get_other3 + get_other4;
     document.getElementById('current_ctc').value = total_ctc.toFixed(0);
+
+    //set EPF default YES
+    if(total_ctc <= 15000){
+      document.getElementById('pf_ded').value = "Yes";
+      fun_pf("Yes");
+    }else{
+      document.getElementById('pf_ded').value = "No";
+      fun_pf("No");
+    }
     
     let ctc_at_join = (+document.getElementById('ctc_at_join').value);
     let inc_salary = total_ctc - ctc_at_join;
@@ -1572,6 +1581,15 @@ function getNextEmpcode(company_role) {
     let total_deduction = ctc_on_probation + trainee_probn_ctc + lost_canteen + lost_breakfast + lost_bus + lost_advance + bonus + ex_gratia + lost_1 + lost_2 + lost_3 + lost_4;
     let current_total_ctc = total_ctc - total_deduction;
     document.getElementById('current_total_ctc').value = current_total_ctc.toFixed(0);
+
+      //set ESI default YES
+    if(current_total_ctc <= 21000){
+      document.getElementById('esic_ded').value = "Yes";
+      fun_esi("Yes");
+    }else{
+      document.getElementById('esic_ded').value = "No";
+      fun_esi("No");
+    }
 
   }
 </script>

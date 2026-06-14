@@ -6,11 +6,14 @@
     <table class="table table-bordered table-striped table-sm" id="printed_table" >
         <thead style="background-color:<?php echo $this->Company->table_bg_color();?>; color:<?php echo $this->Company->table_ft_color();?>;">
             <tr>
-                <th>#</th>
+                 <th>#</th>
                 <th>Edit</th>
-                <th>DP</th>
-                <th>Name</th>
+                <th>DP <br> </th>
+                <th>Name <br>EmpCode, BioCode <br>Unit</th>
                 <th>Dept. Desi.</th>
+
+               
+              
                
                 <th>UAN</th>
                 <th>EPF Code</th>
@@ -91,7 +94,7 @@
                                 {
                                     ?><span style="color:red;" title="Deactive"><?php if(isset($r['first_name'])){echo $name1=$r['first_name'].' ';}if(isset($r['last_name'])){echo $r['last_name'];}?></span><?php
                                 }
-
+                                echo "<br>";
                                 if(isset($r['emp_code']))echo $id=$r['emp_code'];
                                 echo ",";
                                 if(isset($r['bio_code']))echo $r['bio_code'];

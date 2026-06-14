@@ -8,12 +8,12 @@
             <tr>
                 <th>#</th>
                 <th>Edit</th>
-                <th>DP</th>
-                <th>Name</th>
+                <th>DP <br> </th>
+                <th>Name <br> Age<br> F.Name<br>Cast</th>
                 <th>Mob</th>
-                <th>Emp Code</th>
-                <th>Unit</th>
-                <th>Dept. Desi.</th>
+                <th>Emp Code <br> Bio Code</th>
+                <th>Payroll <br> Working</th>
+                <th>Dept.<br> Desi.</th>
 
                 <th>Basic</th>
                 <th>HRA</th>

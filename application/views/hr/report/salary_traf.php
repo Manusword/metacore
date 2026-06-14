@@ -90,6 +90,7 @@ if (!empty($type_search_list) && is_array($type_search_list)) {
                 foreach ($tot as $k => $v) {
                     $tot[$k] += (float)($r[$k] ?? 0);
                 }
+                $a = '0605008700007056';
                 ?>
                 <tr>
                     <td><?= $i++ ?></td>
@@ -99,12 +100,17 @@ if (!empty($type_search_list) && is_array($type_search_list)) {
                     <td><?= $r['department'] ?> </td>
                     <td class="text-right bold"><?= number_format($r['current_total_ctc_payable'],2) ?></td>
                     <td>NFT </td>
-                    <td></td>
+                    <td data-value="<?= (string)$a ?>">
+                        <?= (string)$a ?>
+                    </td>
                     <td class="text-right bold"><?= number_format($r['current_total_ctc_payable'],2) ?></td>
                     <td>INR</td>
                    
                     <!-- <td><?= $r['bank_name'] ?> </td> -->
-                    <td style="mso-number-format:'\@';"><?= $r['bank_account'] ?></td>
+                    <!-- <td style="mso-number-format:'\@';"><?= $r['bank_account'] ?></td> -->
+                   <td data-value="<?= (string)$r['bank_account'] ?>">
+                        <?= (string)$r['bank_account'] ?>
+                    </td>
                     <td><?= $r['bank_ifsc'] ?> </td>
                     <td><?= $month_name ?></td>
                 </tr>

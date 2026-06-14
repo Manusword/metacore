@@ -529,91 +529,229 @@
 
 
 
-	//----export to xlsx without edit column
+	// //----export to xlsx without edit column
+	// function fun_export_xls() {
+
+	// 	const table = document.getElementById("printed_table");
+	// 	if (!table) {
+	// 		alert("Table not found");
+	// 		return;
+	// 	}
+
+	// 	// 🔥 Clone table
+	// 	const clone = table.cloneNode(true);
+
+	// 	/* ❌ REMOVE EDIT COLUMN (if exists) */
+	// 	let editColIndex = -1;
+	// 	clone.querySelectorAll("thead th").forEach((th, index) => {
+	// 		if (th.innerText.trim().toLowerCase() === "edit") {
+	// 			editColIndex = index;
+	// 		}
+	// 	});
+
+	// 	if (editColIndex !== -1) {
+	// 		clone.querySelectorAll("tr").forEach(row => {
+	// 			if (row.children[editColIndex]) {
+	// 				row.children[editColIndex].remove();
+	// 			}
+	// 		});
+	// 	}
+
+	// 	/* 🔥 Replace <br> */
+	// 	clone.querySelectorAll("br").forEach(br => br.replaceWith(", "));
+
+	// 	/* ❌ Remove UI junk */
+	// 	clone.querySelectorAll("img, button, ul, li, i").forEach(el => el.remove());
+	// 	clone.querySelectorAll("a, span").forEach(el => {
+	// 		el.replaceWith(el.innerText);
+	// 	});
+
+	// 	/* 🧹 Clean text */
+	// 	clone.querySelectorAll("td, th").forEach(cell => {
+	// 		cell.innerText = cell.innerText.replace(/\s+/g, " ").trim();
+	// 	});
+
+	// 	/* 📦 Create workbook */
+	// 	const wb = XLSX.utils.book_new();
+	// 	const ws = XLSX.utils.table_to_sheet(clone);
+
+	// 	/* 🔥 FORCE "Emp. Account No" COLUMN AS TEXT */
+	// 	let bankColIndex = -1;
+
+	// 	clone.querySelectorAll("thead th").forEach((th, i) => {
+	// 		if (th.innerText.trim().toLowerCase() === "emp. account no") {
+	// 			bankColIndex = i;
+	// 		}
+	// 	});
+
+	// 	if (bankColIndex !== -1 && ws['!ref']) {
+	// 		const range = XLSX.utils.decode_range(ws['!ref']);
+
+	// 		for (let R = range.s.r + 1; R <= range.e.r; ++R) {
+	// 			const cellAddr = XLSX.utils.encode_cell({ r: R, c: bankColIndex });
+	// 			const cell = ws[cellAddr];
+
+	// 			if (cell && cell.v) {
+	// 				cell.t = 's';              // TEXT
+	// 				cell.v = String(cell.v);  // STRING FORCE
+	// 			}
+	// 		}
+	// 	}
+
+	// 	/* 🔥 AUTO COLUMN WIDTH */
+	// 	const colWidths = [];
+	// 	clone.querySelectorAll("tr").forEach(row => {
+	// 		[...row.children].forEach((cell, i) => {
+	// 			const len = cell.innerText.length;
+	// 			colWidths[i] = Math.max(colWidths[i] || 10, len + 2);
+	// 		});
+	// 	});
+
+	// 	ws["!cols"] = colWidths.map(w => ({ wch: w }));
+
+	// 	XLSX.utils.book_append_sheet(wb, ws, "Report");
+	// 	XLSX.writeFile(wb, "Report.xlsx");
+	// }
+
 	function fun_export_xls() {
 
-		const table = document.getElementById("printed_table");
-		if (!table) {
-			alert("Table not found");
-			return;
-		}
-
-		// 🔥 Clone table
-		const clone = table.cloneNode(true);
-
-		/* ❌ REMOVE EDIT COLUMN (if exists) */
-		let editColIndex = -1;
-		clone.querySelectorAll("thead th").forEach((th, index) => {
-			if (th.innerText.trim().toLowerCase() === "edit") {
-				editColIndex = index;
-			}
-		});
-
-		if (editColIndex !== -1) {
-			clone.querySelectorAll("tr").forEach(row => {
-				if (row.children[editColIndex]) {
-					row.children[editColIndex].remove();
-				}
-			});
-		}
-
-		/* 🔥 Replace <br> */
-		clone.querySelectorAll("br").forEach(br => br.replaceWith(", "));
-
-		/* ❌ Remove UI junk */
-		clone.querySelectorAll("img, button, ul, li, i").forEach(el => el.remove());
-		clone.querySelectorAll("a, span").forEach(el => {
-			el.replaceWith(el.innerText);
-		});
-
-		/* 🧹 Clean text */
-		clone.querySelectorAll("td, th").forEach(cell => {
-			cell.innerText = cell.innerText.replace(/\s+/g, " ").trim();
-		});
-
-		/* 📦 Create workbook */
-		const wb = XLSX.utils.book_new();
-		const ws = XLSX.utils.table_to_sheet(clone);
-
-		/* 🔥 FORCE "Emp. Account No" COLUMN AS TEXT */
-		let bankColIndex = -1;
-
-		clone.querySelectorAll("thead th").forEach((th, i) => {
-			if (th.innerText.trim().toLowerCase() === "emp. account no") {
-				bankColIndex = i;
-			}
-		});
-
-		if (bankColIndex !== -1 && ws['!ref']) {
-			const range = XLSX.utils.decode_range(ws['!ref']);
-
-			for (let R = range.s.r + 1; R <= range.e.r; ++R) {
-				const cellAddr = XLSX.utils.encode_cell({ r: R, c: bankColIndex });
-				const cell = ws[cellAddr];
-
-				if (cell && cell.v) {
-					cell.t = 's';              // TEXT
-					cell.v = String(cell.v);  // STRING FORCE
-				}
-			}
-		}
-
-		/* 🔥 AUTO COLUMN WIDTH */
-		const colWidths = [];
-		clone.querySelectorAll("tr").forEach(row => {
-			[...row.children].forEach((cell, i) => {
-				const len = cell.innerText.length;
-				colWidths[i] = Math.max(colWidths[i] || 10, len + 2);
-			});
-		});
-
-		ws["!cols"] = colWidths.map(w => ({ wch: w }));
-
-		XLSX.utils.book_append_sheet(wb, ws, "Report");
-		XLSX.writeFile(wb, "Report.xlsx");
+	const table = document.getElementById("printed_table");
+	if (!table) {
+		alert("Table not found");
+		return;
 	}
 
-	
+	const clone = table.cloneNode(true);
+
+	/* ❌ REMOVE EDIT COLUMN */
+	let removeIndex = -1;
+	clone.querySelectorAll("thead th").forEach((th, i) => {
+		if (th.innerText.trim().toLowerCase() === "edit") {
+			removeIndex = i;
+		}
+	});
+
+	if (removeIndex !== -1) {
+		clone.querySelectorAll("tr").forEach(row => {
+			if (row.children[removeIndex]) {
+				row.children[removeIndex].remove();
+			}
+		});
+	}
+
+	/* ❌ REMOVE UI JUNK */
+	clone.querySelectorAll("img, button, ul, li, i").forEach(el => el.remove());
+	clone.querySelectorAll("a, span").forEach(el => {
+		el.replaceWith(el.innerText);
+	});
+
+	/* 🔥 HANDLE <br> → MULTIPLE COLUMNS */
+	let maxColumns = 0;
+
+	clone.querySelectorAll("tr").forEach(row => {
+		const newCells = [];
+
+		[...row.children].forEach(cell => {
+			const parts = cell.innerHTML.split(/<br\s*\/?>/i);
+
+			parts.forEach(part => {
+				const newCell = document.createElement(cell.tagName);
+				newCell.innerText = part.replace(/\s+/g, " ").trim();
+				newCells.push(newCell);
+			});
+		});
+
+		maxColumns = Math.max(maxColumns, newCells.length);
+
+		row.innerHTML = "";
+		newCells.forEach(c => row.appendChild(c));
+	});
+
+	/* 🔥 USE ORIGINAL DATA-VALUE (PREVENT NUMBER CONVERSION) */
+	clone.querySelectorAll("td, th").forEach(cell => {
+		const val = cell.getAttribute("data-value");
+
+		if (val !== null) {
+			cell.innerText = val; // exact string
+		} else {
+			cell.innerText = cell.textContent.trim();
+		}
+	});
+
+	/* ⚠️ NORMALIZE COLUMN COUNT */
+	clone.querySelectorAll("tr").forEach(row => {
+		while (row.children.length < maxColumns) {
+			const empty = document.createElement("td");
+			empty.innerText = "";
+			row.appendChild(empty);
+		}
+	});
+
+	/* 📦 CREATE EXCEL */
+	const wb = XLSX.utils.book_new();
+	const ws = XLSX.utils.table_to_sheet(clone, { raw: true });
+
+	/* 🔥 FORCE ACCOUNT NUMBER AS TEXT */
+	let bankColIndex = -1;
+
+	clone.querySelectorAll("thead th").forEach((th, i) => {
+		if (th.innerText.trim().toLowerCase().includes("account")) {
+			bankColIndex = i;
+		}
+	});
+
+	if (bankColIndex !== -1 && ws['!ref']) {
+		const range = XLSX.utils.decode_range(ws['!ref']);
+
+		for (let R = range.s.r + 1; R <= range.e.r; ++R) {
+			const addr = XLSX.utils.encode_cell({ r: R, c: bankColIndex });
+			const cell = ws[addr];
+
+			if (cell) {
+				cell.t = 's';
+				cell.z = '@';
+				cell.v = String(cell.v || "");
+
+				// 🔥 prepend zero fix (agar missing ho gaya ho)
+				if (/^\d+$/.test(cell.v) && cell.v.length === 15) {
+					cell.v = "0" + cell.v;
+				}
+			}
+		}
+	}
+
+	Object.keys(ws).forEach(cellAddr => {
+
+			if (cellAddr[0] === '!') return; // skip meta
+
+			const cell = ws[cellAddr];
+
+			if (cell && typeof cell.v === 'string') {
+
+				// agar numeric string hai (leading zero possible)
+				if (/^0\d+/.test(cell.v)) {
+					cell.t = 's';
+					cell.z = '@';
+					cell.v = cell.v;
+				}
+			}
+		});
+
+	/* 📏 AUTO WIDTH */
+	const colWidths = [];
+
+	clone.querySelectorAll("tr").forEach(row => {
+		[...row.children].forEach((cell, i) => {
+			const len = cell.innerText.length;
+			colWidths[i] = Math.max(colWidths[i] || 10, len + 2);
+		});
+	});
+
+	ws["!cols"] = colWidths.map(w => ({ wch: w }));
+
+	XLSX.utils.book_append_sheet(wb, ws, "Report");
+	XLSX.writeFile(wb, "Report.xlsx");
+}
 
 
 	//----export to xls without edit column

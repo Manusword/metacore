@@ -167,159 +167,12 @@
 
 </style>
 
-
 <?php
-$canEdit = $this->Company->checkPermission3("Hr/show_all_unit");
-$defaultUnit = '';
-
-if(!$canEdit){
-    $login_emp_code = $this->session->userdata('login_emp_code');
-    $basicDetails   = $this->Hrmodel->get_emp_details_with_emp_code($login_emp_code);
-    $defaultUnit    = $basicDetails[0]['company_role'] ?? '';
-}
+    $this->Hrmodel->all_unit_filter();//payroll units filter
 ?>
 
 <div class="breadcrumb" style=" margin-top:-30px">
-    <div class="row w-100">
-
-
-
-    
-<?php
-$menuaccess = $this->Base->get_menu_access_of_role() ?? [];
-$visibleCompanies = [];
-
-if ($canEdit) {
-    // edit mode → sab companies
-    $visibleCompanies = $con;
-} elseif (!empty($menuaccess)) {
-    // view mode → sirf allowed companies
-    foreach ($con as $c) {
-        if (in_array($c['name'], $menuaccess, true)) {
-            $visibleCompanies[] = $c;
-        }
-    }
-} elseif ($defaultUnit) {
-    // fallback → default unit
-    $visibleCompanies[] = ['name' => $defaultUnit];
-}
-?>
-
- 
-
-<div class="col-md-12">
-    <div class="border-top p-2 d-flex flex-wrap align-items-center"
-         style="gap:10px; max-height:80px; overflow:auto;">
-
-        <?php if ($canEdit): ?>
-            <label class="m-0">
-                <input type="checkbox" id="all_units" onclick="toggleAll(this)">
-                All Payroll Unit
-            </label>
-        <?php endif; ?>
-
-        <?php foreach ($visibleCompanies as $i => $d): ?>
-            <label class="m-0">
-                <input type="checkbox"
-                       name="company_role1[]"
-                       value="<?= htmlspecialchars($d['name']) ?>"
-                       id="unit<?= $i ?>"
-                       data-master="<?= $d['master_unit_id'] ?>"
-                     >
-                <?= htmlspecialchars($d['display_name']) ?>
-            </label>
-        <?php endforeach; ?>
-
-        <?php if (empty($visibleCompanies)): ?>
-            <span class="text-muted">No Payroll Unit Access</span>
-        <?php endif; ?>
-
-    </div>
-</div>
-
-<div class="col-md-1" >
-    <label >Company</label>
-    <select class="form-control" id="plant_master" >
-        <option value="">All</option>
-        <?php 
-        foreach($conMaster as $d)
-        {
-            ?>
-                <option   value="<?php echo $d['id'];?>"><?php echo $d['master_unit_id'];?></option>
-            <?php 
-        }
-        ?>
-    </select>
-</div>
-<script>
-document.getElementById('plant_master').addEventListener('change', function () {
-    let selectedText = this.options[this.selectedIndex].text.trim();
-
-    let allCheckbox = document.getElementById('all_units');
-    let checkboxes = document.querySelectorAll('input[name="company_role1[]"]');
-
-    if (this.value === "") {
-        // All selected → tick everything
-        if (allCheckbox) allCheckbox.checked = true;
-        checkboxes.forEach(cb => cb.checked = true);
-        return;
-    }
-
-    let allChecked = true;
-
-    checkboxes.forEach(function (cb) {
-        if (cb.getAttribute('data-master') === selectedText) {
-            cb.checked = true;
-        } else {
-            cb.checked = false;
-            allChecked = false;
-        }
-    });
-
-    if (allCheckbox) {
-        allCheckbox.checked = allChecked;
-    }
-});
-</script>
-    
-       
-
-
-        <div class="col-md-1">
-            <label>Report Type</label>
-            <select class="form-control" id="report_type">
-                <option value="1">P & A</option>
-                <option value="2">P/A & Time</option>
-                <option value="13">P/A & Time2</option>
-                <option value="3">Salary Sheet</option>
-                <option value="4">Salary Transfer</option>
-                <option value="11">Salary Dept. wise</option>
-                <option value="10">Salary Slip</option>
-                <option value="5">Gratuity</option>
-                <option value="6">Bonus</option>
-                <option value="7">EPF Challan</option>
-                <option value="8">ESI Challan</option>
-                <option value="9">No Attendance</option>
-                <option value="12">Leave Rem.</option>
-            </select>
-        </div>
-
-       <div class="col-md-1" >
-            <label >Working Unit</label>
-            <select class="form-control" id="search_plant" >
-                <option value="">All</option>
-                <?php 
-                foreach($con2 as $d)
-                {
-                    ?>
-                        <option   value="<?php echo $d['name'];?>"><?php echo $d['display_name'];?></option>
-                    <?php 
-                }
-                ?>
-            </select>
-        </div>
-
-
+			<div class="row w-100">
        
    
 
@@ -391,6 +244,25 @@ document.getElementById('plant_master').addEventListener('change', function () {
                 <option selected value="">All</option>
                 <option >Active</option>
                 <option>Deactive</option>
+            </select>
+        </div>
+
+        <div class="col-md-1">
+            <label>Report Type</label>
+            <select class="form-control" id="report_type">
+                <option value="1">P & A</option>
+                <option value="2">P/A & Time</option>
+                <option value="13">P/A & Time2</option>
+                <option value="3">Salary Sheet</option>
+                <option value="4">Salary Transfer</option>
+                <option value="11">Salary Dept. wise</option>
+                <option value="10">Salary Slip</option>
+                <option value="5">Gratuity</option>
+                <option value="6">Bonus</option>
+                <option value="7">EPF Challan</option>
+                <option value="8">ESI Challan</option>
+                <option value="9">No Attendance</option>
+                <option value="12">Leave Rem.</option>
             </select>
         </div>
 

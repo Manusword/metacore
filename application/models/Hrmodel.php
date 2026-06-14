@@ -11,6 +11,210 @@ class Hrmodel extends CI_Model
     }//function close
 
 
+	public function all_unit_filter()
+	{
+		//$result['dept']=$this->Base->get_hr_dept();
+		$conMaster=$this->Base->get_payroll_master();
+		$con=$this->Base->get_payroll_contractor();
+		$con2=$this->Base->get_all_contractor_code();
+
+		$canEdit = $this->Company->checkPermission3("Hr/show_all_unit");
+		$defaultUnit = '';
+
+		if(!$canEdit){
+			$login_emp_code = $this->session->userdata('login_emp_code');
+			$basicDetails   = $this->Hrmodel->get_emp_details_with_emp_code($login_emp_code);
+			$defaultUnit    = $basicDetails[0]['company_role'] ?? '';
+		}
+		?>
+
+		<div class="breadcrumb" style=" margin-top:-30px">
+			<div class="row w-100">
+
+
+
+			
+		<?php
+		$menuaccess = $this->Base->get_menu_access_of_role() ?? [];
+		$visibleCompanies = [];
+
+		if ($canEdit) {
+			// edit mode → sab companies
+			$visibleCompanies = $con;
+		} elseif (!empty($menuaccess)) {
+			// view mode → sirf allowed companies
+			foreach ($con as $c) {
+				if (in_array($c['name'], $menuaccess, true)) {
+					$visibleCompanies[] = $c;
+				}
+			}
+		} elseif ($defaultUnit) {
+			// fallback → default unit
+			$visibleCompanies[] = ['name' => $defaultUnit];
+		}
+		?>
+
+		
+
+
+
+
+		<!-- COMPANY (checkbox like payroll) -->
+		<div class="col-md-12">
+			<div class="border-top p-2 d-flex flex-wrap align-items-center"
+				style="gap:10px; max-height:80px; overflow:auto;">
+
+				<strong class="mr-2">Company:</strong>
+
+				<label class="m-0">
+					<input type="checkbox" name="company_master[]" value="">
+					All
+				</label>
+
+				<?php foreach($conMaster as $i => $d): ?>
+					<label class="m-0">
+						<input type="checkbox"
+							name="company_master[]"
+							value="<?= htmlspecialchars($d['master_unit_id']) ?>"
+							id="company<?= $i ?>">
+						<?= htmlspecialchars($d['master_unit_id']) ?>
+					</label>
+				<?php endforeach; ?>
+
+			</div>
+		</div>
+
+		<div class="col-md-12">
+			<div class="border-top p-2 d-flex flex-wrap align-items-center"
+				style="gap:10px; max-height:80px; overflow:auto;">
+
+				<strong class="mr-2">Payroll Unit:</strong>
+
+				<?php if ($canEdit): ?>
+					<label class="m-0">
+						<input type="checkbox" id="all_units" onclick="toggleAll(this)">
+						All
+					</label>
+				<?php endif; ?>
+
+				<?php foreach ($visibleCompanies as $i => $d): ?>
+					<label class="m-0">
+						<input type="checkbox"
+							name="company_role1[]"
+							value="<?= htmlspecialchars($d['name']) ?>"
+							id="unit<?= $i ?>"
+							data-master="<?= $d['master_unit_id'] ?>"
+							>
+						<?= htmlspecialchars($d['display_name']) ?>
+					</label>
+				<?php endforeach; ?>
+
+				<?php if (empty($visibleCompanies)): ?>
+					<span class="text-muted">No Payroll Unit Access</span>
+				<?php endif; ?>
+
+			</div>
+		</div>
+
+		<!-- WORKING UNIT (checkbox like payroll) -->
+		<div class="col-md-12">
+			<div class="border-top p-2 d-flex flex-wrap align-items-center"
+				style="gap:10px; max-height:80px; overflow:auto;">
+
+				<strong class="mr-2">Working Unit:</strong>
+
+				<label class="m-0">
+					<input type="checkbox" checked name="working_unit[]" value="">
+					All
+				</label>
+
+				<?php foreach($con2 as $i => $d): ?>
+					<label class="m-0">
+						<input type="checkbox" checked
+							name="working_unit[]"
+							value="<?= htmlspecialchars($d['name']) ?>"
+							id="working<?= $i ?>">
+						<?= htmlspecialchars($d['display_name']) ?>
+					</label>
+				<?php endforeach; ?>
+
+			</div>
+		</div>
+		</div>
+		</div>
+
+
+
+		<script>
+			// ✅ WORKING UNIT ALL toggle
+		document.querySelector('input[name="working_unit[]"][value=""]').addEventListener('change', function () {
+			let checked = this.checked;
+
+			let workingCheckboxes = document.querySelectorAll('input[name="working_unit[]"]');
+
+			workingCheckboxes.forEach(cb => {
+				cb.checked = checked;
+			});
+		});
+
+		// ✅ COMPANY ALL (top wala)
+		document.querySelector('input[name="company_master[]"][value=""]').addEventListener('change', function () {
+			let checked = this.checked;
+
+			let companyCheckboxes = document.querySelectorAll('input[name="company_master[]"]');
+			let payrollCheckboxes = document.querySelectorAll('input[name="company_role1[]"]');
+
+			// company sab check/uncheck
+			companyCheckboxes.forEach(cb => cb.checked = checked);
+
+			// payroll bhi sab check/uncheck
+			payrollCheckboxes.forEach(p => p.checked = checked);
+
+			// payroll ALL checkbox sync
+			let allUnits = document.getElementById('all_units');
+			if (allUnits) allUnits.checked = checked;
+		});
+
+		// ✅ COMPANY individual → payroll control
+		document.querySelectorAll('input[name="company_master[]"]:not([value=""])').forEach(function (cb) {
+			cb.addEventListener('change', function () {
+
+				let selectedCompanies = Array.from(document.querySelectorAll('input[name="company_master[]"]:checked'))
+					.map(el => el.value)
+					.filter(v => v !== "");
+
+				let payrollCheckboxes = document.querySelectorAll('input[name="company_role1[]"]');
+
+				// reset payroll
+				payrollCheckboxes.forEach(p => p.checked = false);
+
+				if (selectedCompanies.length === 0) {
+					let allUnits = document.getElementById('all_units');
+					if (allUnits) allUnits.checked = false;
+					return;
+				}
+
+				// match
+				payrollCheckboxes.forEach(function (p) {
+					if (selectedCompanies.includes(p.getAttribute('data-master'))) {
+						p.checked = true;
+					}
+				});
+
+				// ALL off
+				let allUnits = document.getElementById('all_units');
+				if (allUnits) allUnits.checked = false;
+			});
+		});
+		</script>
+		<?php
+    
+ 
+    }//function close
+
+
+
+
 
 	//product_autocomplate_search
     public function op_autocomplate_search_via_name($name)
@@ -69,9 +273,27 @@ class Hrmodel extends CI_Model
 
 	
 
-	public function get_employees_without_attendance($year, $month, $company_role,$active)
+	public function get_employees_without_attendance($year, $month, $company_role,$search_plantUnit, $active)
 	{
-		$company_id = $this->session->userdata('company_id'); 		
+		$company_id = $this->session->userdata('company_id'); 	
+		// company_role
+		if (!empty($company_role) && is_array($company_role)) {
+			$company_role = array_map('trim', $company_role);
+			$company_role = array_map(function($v){
+				return "'" . addslashes($v) . "'";
+			}, $company_role);
+			$company_role = implode(",", $company_role);
+		}
+
+		// plant
+		if (!empty($search_plantUnit) && is_array($search_plantUnit)) {
+			$search_plantUnit = array_map('trim', $search_plantUnit);
+			$search_plantUnit = array_map(function($v){
+				return "'" . addslashes($v) . "'";
+			}, $search_plantUnit);
+			$search_plantUnit = implode(",", $search_plantUnit);
+		}
+
 		if(!empty($active)){
 			$activeCol = " AND B.active = '$active' ";
 		}else{
@@ -83,8 +305,7 @@ class Hrmodel extends CI_Model
 
 
 	
-		$sql = "
-				SELECT
+		$sql = " SELECT
 					B.company_role,
 					B.emp_code,
 					B.bio_code,
@@ -114,7 +335,8 @@ class Hrmodel extends CI_Model
 					AND B.owner < 1
 					AND B.company_id='$company_id'
 					AND B.doj <= '$lastDate'
-					AND B.company_role = '$company_role'  
+					AND B.company_role IN ($company_role)
+					AND B.plant IN ($search_plantUnit)
 					AND (
 						B.attendance_entry = '0'
 						OR B.attendance_entry IS NULL
@@ -126,7 +348,7 @@ class Hrmodel extends CI_Model
 						WHERE a.emp_code = B.id
 						AND a.att_year = '$year'
 						AND a.att_month = '$month'
-						AND a.company_role_id = '$company_role'
+						AND a.company_role_id IN ($company_role)
 						AND a.company_id='$company_id'
 					)
 				ORDER BY B.pay_code ASC
@@ -224,11 +446,15 @@ class Hrmodel extends CI_Model
 							a.epf_payable_master_roll,
 							a.esic_payable_master_roll,
 							a.master_roll_total_loss,
-							a.master_roll_total_net_pay  
+							a.master_roll_total_net_pay,
+
+							CC.bank_account as company_bank_acc
 				FROM daily_attendance_monthly  as a
 				LEFT JOIN employee as B ON B.id = a.emp_code
 				LEFT JOIN department as d ON d.department_id = B.department_id
 				LEFT JOIN department_role as r ON r.role_id = B.role_in_department
+				LEFT JOIN contractor_code as CC ON a.company_role_id = CC.name
+				
 				WHERE 1=1 and a.company_id='$company_id' and B.company_id='$company_id' $where
 				";
 		$res=$this->Mymodel->query1($query);
@@ -863,8 +1089,7 @@ class Hrmodel extends CI_Model
 		$total_p = $total_persent;
 		
 		$total_leave_cl = $total_leave_cl + ($half_cl * 0.5);
-		
-		$total_absent = round($total_a+$total_leave);
+		$total_absent = $total_a+$total_leave + (($half_present) * 0.5) ;
 		$total_sl = $total_leave_sl;
 		$total_cl = $total_leave_cl;
 		$total_el = $total_leave_el;

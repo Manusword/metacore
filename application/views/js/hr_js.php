@@ -509,7 +509,7 @@ $(document).ready(function(e) {
 	$('#emp_search').click(function(){
 		
 		let name=$('#name1').val();
-		let company_role=$('#company_role1').val();
+		//let company_role=$('#company_role1').val();
 		let mob=$('#mob1').val();
 		let emp_id=$('#emp_id1').val();
 		let bio_id=$('#bio_id1').val();
@@ -519,11 +519,36 @@ $(document).ready(function(e) {
 		let active=$('#active1').val();
 		let mater_roll=$('#mater_roll').val();
 		let current_shift=$('#current_shift').val();
-		let search_plant=$('#search_plant').val();
+		//let search_plant=$('#search_plant').val();
+		
 		let doj1=$('#doj1').val();
 		let dor1=$('#dor1').val();
 		let report_type1=$('#report_type1').val();
 		let search1=1;
+
+		// collect checked payroll units
+		let company_role = [];
+		$('input[name="company_role1[]"]:checked').each(function () {
+			company_role.push($(this).val());
+		});
+
+		let working_unit = [];
+		$('input[name="working_unit[]"]:checked').each(function () {
+			working_unit.push($(this).val());
+		});
+
+		
+
+		// at least one unit
+		if (company_role.length === 0) {
+			fun_message('warning','Warning','Please select at least one Payroll Unit','toast-bottom-right');return false;
+		}
+
+		if (working_unit.length === 0) {
+			fun_message('warning','Warning','Please select at least one Working Unit','toast-bottom-right');return false;
+		}
+
+		
 		//-------------------------------getting gst type
 		$('.loader').show();
 		setTimeout(function() {
@@ -540,7 +565,7 @@ $(document).ready(function(e) {
 					active:active,
 					mater_roll:mater_roll,
 					current_shift:current_shift,
-					search_plant:search_plant,
+					search_plant:working_unit,
 					doj1:doj1,
 					dor1:dor1,
 					report_type1:report_type1,
@@ -572,7 +597,7 @@ $(document).ready(function(e) {
 		let search_year=$('#search_year').val();
 		let search_month=$('#search_month').val();
 		let report_type=$('#report_type').val();
-		let search_plant=$('#search_plant').val();
+		//let search_plant=$('#search_plant').val();
 
 		
 
@@ -584,9 +609,20 @@ $(document).ready(function(e) {
 			company_role.push($(this).val());
 		});
 
+		let working_unit = [];
+		$('input[name="working_unit[]"]:checked').each(function () {
+			working_unit.push($(this).val());
+		});
+
+		
+
 		// at least one unit
 		if (company_role.length === 0) {
 			fun_message('warning','Warning','Please select at least one Payroll Unit','toast-bottom-right');return false;
+		}
+
+		if (working_unit.length === 0) {
+			fun_message('warning','Warning','Please select at least one Working Unit','toast-bottom-right');return false;
 		}
 
 		// single-unit validation
@@ -615,7 +651,7 @@ $(document).ready(function(e) {
 					search_year:search_year,
 					search_month:search_month,	
 					report_type:report_type,
-					search_plant:search_plant,
+					search_plant:working_unit,
 					search1:search1,
 				}, 
 				function(data, textStatus)

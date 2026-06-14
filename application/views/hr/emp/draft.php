@@ -6,14 +6,16 @@
     <table class="table table-bordered table-striped table-sm" id="printed_table" >
         <thead style="background-color:<?php echo $this->Company->table_bg_color();?>; color:<?php echo $this->Company->table_ft_color();?>;">
             <tr>
-               <th>#</th>
+               
+                <th>#</th>
                 <th>Edit</th>
-                <th>DP</th>
-                <th>Name</th>
+                <th>DP <br> </th>
+                <th>Name <br> Age<br> F.Name<br>Cast</th>
                 <th>Mob</th>
-                <th>Emp Code</th>
-                <th>Unit</th>
-                <th>Dept. Desi.</th>
+                <th>Emp Code <br> Bio Code</th>
+                <th>Payroll <br> Working</th>
+                <th>Dept.<br> Desi.</th>
+
                 <th>Salary</th>
                 <th>Pf, Esi</th>
                

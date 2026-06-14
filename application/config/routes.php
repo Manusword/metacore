@@ -52,3 +52,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 $route['default_controller'] = 'welcome';
 $route['404_override'] = '';
 $route['translate_uri_dashes'] = FALSE;
+
+// Route rules for the Account/Tally module in subdirectory
+$route['Account'] = 'account/Dashboard';
+$route['Account/(:any)'] = 'account/$1';
+

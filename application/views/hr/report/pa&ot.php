@@ -54,8 +54,8 @@ $attMap = [
         <table class="table table-bordered table-sm" id="printed_table">
         <thead>
             <tr>
-                  <th>Sno</th>
-                <th>Emp Code</th>
+                <th>Sno</th>
+                <th>Emp Code <br>Bio Code<br>Name<br> Dept.<br></th>
                 <!-- <th>Bio Code</th>
                 <th>Employee Name</th>
                 <th>Department</th> -->
@@ -88,13 +88,9 @@ $attMap = [
             <tr>
 
                  <td><?= $i++ ?></td>
-                <!-- <td align="left"><strong><?= $emp['pay_code'] ?></strong></td>
-                <td align="left"><?= $emp['bio_code'] ?></td>
-                <td align="left" <?php if($emp['active'] == 'Deactive') echo "style='background-color:red;' " ; ?>><?= htmlspecialchars($emp['full_name']) ?> </td>
-                <td align="left"><?= htmlspecialchars($emp['department_name']) ?></td> -->
-
+                
                 <td>
-                    <strong><?= $emp['pay_code'] ?></strong> <br>
+                    <?= $emp['pay_code'] ?><br>
                     <?= $emp['bio_code'] ?><br>
                     <span <?php if($emp['active'] == 'Deactive') echo "style='background-color:red;' " ; ?>> <b><?= htmlspecialchars($emp['full_name']) ?> </b></span><br>
                     <?= htmlspecialchars($emp['department_name']) ?><br>
@@ -212,10 +208,10 @@ $attMap = [
                 </td>
 
                 <td>
-                    <strong><?= $emp['total_present'] ?></strong> 
+                    <?= $emp['total_present'] ?> 
                     <!-- <br><br> <?php if((float)$emp['total_ot']>0){?>OT: <span style="color:red"><?= $emp['total_ot'] ?></span> <?php }?> -->
                 </td>
-                <td><strong><?= $emp['total_absent'] ?></strong></td>
+                <td><?= $emp['total_absent'] ?></td>
 
                 <!-- <td><?= number_format($emp['lost_1_payable'],2) ?></td>
                 <td><?= number_format($emp['advance_this_month_payable'],2) ?></td> -->

@@ -714,6 +714,7 @@ function recalcTotals(){
 
     document.getElementById('showTotalsysHrs').innerText = th.toFixed(2);
     document.getElementById('showTotalsysMin').innerText = tm;
+    document.getElementById('showTotalsysMinDay').innerText = (tm/60/12).toFixed(1);
     document.getElementById('showTotalmcMin').innerText = tmc;
 }
 
