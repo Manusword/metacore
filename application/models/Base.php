@@ -5,30 +5,28 @@ class Base extends CI_Model
 	function __construct() 
 	{
         parent::__construct();
-         
-        
         
 		//$this->load->library('encrypt');
         $this->load->model('Company');
         $this->load->model('Mymodel');
         $this->load->model('Hrmodel');
 
-        // $this->load->model('Productmodel');	
+        $this->load->model('Productmodel');	
         $this->load->model('Suppliermodel');
         $this->load->model('Customermodel');
-        // $this->load->model('Pomodel');
-        // $this->load->model('Storemodel');
-        // $this->load->model('Invoicemodel');	
-        //$this->load->model('Maintenancemodel');
-        // $this->load->model('Meetingmodel');
-        // $this->load->model('Machinemodel');
-        // $this->load->model('Productionmodel');
-        // $this->load->model('Chartmodel');
-        // $this->load->model('Dispatchmodel');
-        // $this->load->model('Qcmodel');
-        // $this->load->model('Gpmodel');
-        // $this->load->model('Ddiemodel');
-        // $this->load->model('Aimodel');
+        $this->load->model('Pomodel');
+        $this->load->model('Storemodel');
+        $this->load->model('Invoicemodel');	
+        $this->load->model('Maintenancemodel');
+        $this->load->model('Meetingmodel');
+        $this->load->model('Machinemodel');
+        $this->load->model('Productionmodel');
+        $this->load->model('Chartmodel');
+        $this->load->model('Dispatchmodel');
+        $this->load->model('Qcmodel');
+        $this->load->model('Gpmodel');
+        $this->load->model('Ddiemodel');
+        $this->load->model('Aimodel');
 
     }//function close
     

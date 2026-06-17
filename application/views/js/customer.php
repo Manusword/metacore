@@ -314,7 +314,7 @@ $(document).ready(function(e) {
 								  city:city,
 								  state:state,
 								  country:country,
-								  zip,zip,
+								  zip:zip,
 								  vender_code:vender_code,
 								  con_name1:con_name1,
 								  con_mob1:con_mob1,

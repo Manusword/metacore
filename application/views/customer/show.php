@@ -52,13 +52,6 @@
                 
                 <div class="separator-breadcrumb border-top" ></div>
                 <div class="row">
-                    <?php $reg_form = $this->Company->customer_reg_form_show();  if($reg_form[0]['details2']=='Yes'){?>
-                    <div class="col-md-12" style="margin-bottom:20px;" >
-                        <span ><i class="fa fa-long-arrow-down" style="color:green; "></i><a href="<?php  echo $reg_form[0]['details3']?>" style="color:green;"> Download Customer Registration Form</a></span>
-                        <span style="margin-left:50px;"><i class="fa fa-long-arrow-up" style="color:red; "></i><a target="_blank" href="<?php echo base_url();?>index.php/Supplier/supplier_reg_form_upload"  style="color:red;"> Upload Customer Registration Form</a></span>
-                    </div>
-                    <?php }?>
-                    
                     <div class="col-md-12">
                       <div class="card mb-4">
                             <div class="card-body">

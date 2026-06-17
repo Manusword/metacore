@@ -74,7 +74,9 @@ class Company extends CI_Model
     //suplier reg form
     public function supplier_reg_form_show()
 	{
-        $sql = "SELECT * FROM company_profile where id =9 ";
+        //$sql = "SELECT * FROM company_profile where id =9 ";
+        $company_id = $this->session->userdata('company_id');
+        $sql = "SELECT * FROM company where company_id = '$company_id' ";
         $query = $this->db->query($sql);
         return $res = $query->result_array();
     }//function close
@@ -89,7 +91,9 @@ class Company extends CI_Model
     //customer reg form
     public function customer_reg_form_show()
 	{
-        $sql = "SELECT * FROM company_profile where id =10 ";
+        //$sql = "SELECT * FROM company_profile where id =10 ";
+        $company_id = $this->session->userdata('company_id');
+        $sql = "SELECT * FROM company where company_id = '$company_id' ";
         $query = $this->db->query($sql);
         return $res = $query->result_array();
     }//function close
@@ -98,10 +102,11 @@ class Company extends CI_Model
     //customer_rate_entry_via_customer_add  
     public function customer_rate_entry_via_customer_add()
     {
-        $sql = "SELECT * FROM company_profile where id = 6 ";
+        $company_id = $this->session->userdata('company_id');
+        $sql = "SELECT bill_from_customer_rate FROM company where company_id = '$company_id'  ";
         $query = $this->db->query($sql);
         $res = $query->result_array();
-        if($res[0]['details4'] == 'Yes' OR $res[0]['details4'] == 'Mix')
+        if($res[0]['bill_from_customer_rate'] == 'Yes')
         {
             return 'TRUE';
         }
@@ -547,7 +552,7 @@ class Company extends CI_Model
             SELECT DISTINCT SM.*
             FROM erp_sub_menu SM
             INNER JOIN erp_role_permission RP
-                ON RP.menu_id = SM.main_menu_id
+                ON (RP.sub_menu_id = SM.id OR RP.menu_id = SM.main_menu_id OR RP.menu_id = (SELECT main_menu_id FROM erp_sub_menu WHERE id = SM.main_menu_id))
             WHERE RP.role_id = '$role_id'
             AND SM.main_menu_id = '$menu_id'
             AND SM.status = 'Active' AND SM.show_in_list='Yes'
@@ -620,7 +625,7 @@ class Company extends CI_Model
             SELECT 1
             FROM erp_sub_menu SM
             INNER JOIN erp_role_permission RP
-                ON RP.menu_id = SM.main_menu_id
+                ON (RP.sub_menu_id = SM.id OR RP.menu_id = SM.main_menu_id OR RP.menu_id = (SELECT main_menu_id FROM erp_sub_menu WHERE id = SM.main_menu_id))
             WHERE RP.role_id = '$role_id'
             AND SM.id_name = '$id_name'
             AND SM.status = 'Active'
@@ -647,7 +652,7 @@ class Company extends CI_Model
             SELECT 1
             FROM erp_sub_menu SM
             INNER JOIN erp_role_permission RP
-                ON RP.menu_id = SM.main_menu_id
+                ON (RP.sub_menu_id = SM.id OR RP.menu_id = SM.main_menu_id OR RP.menu_id = (SELECT main_menu_id FROM erp_sub_menu WHERE id = SM.main_menu_id))
             WHERE RP.role_id = '$role_id'
             AND SM.id_name = '$id_name'
             AND SM.status = 'Active'
@@ -675,7 +680,7 @@ class Company extends CI_Model
             SELECT 1
             FROM erp_sub_menu SM
             INNER JOIN erp_role_permission RP
-                ON RP.menu_id = SM.main_menu_id
+                ON (RP.sub_menu_id = SM.id OR RP.menu_id = SM.main_menu_id OR RP.menu_id = (SELECT main_menu_id FROM erp_sub_menu WHERE id = SM.main_menu_id))
             WHERE RP.role_id = '$role_id'
             AND SM.id_name = '$id_name'
             AND SM.status = 'Active'

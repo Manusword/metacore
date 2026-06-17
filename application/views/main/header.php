@@ -197,13 +197,14 @@
 /* Make top navigation bar menu items compact for ERP departments */
 .layout-horizontal-bar .header-topnav .topnav a,
 .layout-horizontal-bar .header-topnav .topnav label {
-    padding: 10px 16px !important;
-    font-size: 13px !important;
+    padding: 10px 5px !important;
+    font-size: 11px !important;
     font-weight: 600 !important;
     color: #2b303a !important;
     height: 44px !important;
     transition: all 0.25s ease !important;
     position: relative;
+    letter-spacing: 0.1px;
 }
 
 .layout-horizontal-bar .header-topnav .topnav ul.menu > li > div > a,
@@ -219,7 +220,7 @@
 .layout-horizontal-bar .header-topnav {
     top: 60px !important;
     background-color: #ffffff !important;
-    border-top: 2px solid #2ea63b !important; /* Elegant green top bar */
+    border-top: 2px solid #e37209 !important; /* Elegant orange top bar */
     border-bottom: 1px solid #eef0f3 !important;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02) !important;
 }
@@ -238,9 +239,46 @@
     border-radius: 6px !important;
 }
 
+/* 3rd level submenu flyout rules */
+.layout-horizontal-bar .header-topnav .topnav ul ul ul {
+    opacity: 0 !important;
+    visibility: hidden !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: 100% !important;
+    transform: translateX(10px) !important;
+    transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s ease !important;
+    z-index: 1000 !important;
+    background: #ffffff !important;
+    border: 1px solid #eef0f3 !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08) !important;
+    border-radius: 6px !important;
+    padding: 5px 0 !important;
+    list-style: none !important;
+}
+
+.layout-horizontal-bar .header-topnav .topnav ul ul li {
+    position: relative !important;
+}
+
+.layout-horizontal-bar .header-topnav .topnav ul ul li:hover > ul {
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: translateX(0) !important;
+}
+
+.layout-horizontal-bar .header-topnav .topnav ul ul li.has-submenu > a::after {
+    content: "▸" !important;
+    float: right !important;
+    margin-left: auto !important;
+    padding-left: 10px !important;
+    font-size: 10px !important;
+    opacity: 0.6 !important;
+}
+
 .layout-horizontal-bar .header-topnav .topnav .nav-icon {
-    margin-right: 4px !important;
-    font-size: 14px !important;
+    margin-right: 2px !important;
+    font-size: 11px !important;
 }
 
 /* Premium bottom line indicator on hover (No blocky background) */
@@ -271,7 +309,7 @@
 
 /* Secondary dropdown hover */
 .layout-horizontal-bar .header-topnav .topnav ul li ul li:hover a {
-    color: #2ea63b !important;
+    color: #e37209 !important;
     background-color: #f7f9f8 !important;
 }
 
@@ -430,7 +468,8 @@
     
                         <?php
                         $menu_list = $this->Company->get_all_main_menu();
-                            foreach ($menu_list as $m):
+                        
+                        foreach ($menu_list as $m):
                             ?>
                                 <li>
                                     <div>
@@ -451,19 +490,47 @@
                                                 $sub_menu_list = $this->Company->get_all_sub_menu_from_main_id($m['id']);
                                                 
                                                 foreach ($sub_menu_list as $n):
-                                                    if ($n['is_direct_link'] === 'Yes'):
+                                                    $child_menu_list = ($m['id'] == 12) ? $this->Company->get_all_sub_menu_from_main_id($n['id']) : [];
+                                                    $has_children = !empty($child_menu_list);
+                                                    
+                                                    if ($has_children):
                                                 ?>
+                                                        <li class="nav-item menu-toggle has-submenu">
+                                                            <a href="#">
+                                                                <span class="item-name"><?= $n['name']; ?></span>
+                                                            </a>
+                                                            <ul>
+                                                                <?php foreach ($child_menu_list as $c): ?>
+                                                                    <?php if ($c['is_direct_link'] === 'Yes'): ?>
+                                                                        <li class="nav-item menu-toggle">
+                                                                            <a href="<?= base_url($c['link']); ?>">
+                                                                                <span class="item-name"><?= $c['name']; ?></span>
+                                                                            </a>
+                                                                        </li>
+                                                                    <?php else: ?>
+                                                                        <li class="nav-item menu-toggle">
+                                                                            <a href="#" onclick="showPage(this.id)" id="<?= $c['id_name']; ?>">
+                                                                                <span class="item-name"><?= $c['name']; ?></span>
+                                                                            </a>
+                                                                        </li>
+                                                                    <?php endif; ?>
+                                                                <?php endforeach; ?>
+                                                            </ul>
+                                                        </li>
+                                                <?php else: ?>
+                                                    <?php if ($n['is_direct_link'] === 'Yes'): ?>
                                                         <li class="nav-item menu-toggle">
                                                             <a href="<?= base_url($n['link']); ?>">
                                                                 <span class="item-name"><?= $n['name']; ?></span>
                                                             </a>
                                                         </li>
-                                                <?php else: ?>
+                                                    <?php else: ?>
                                                         <li class="nav-item menu-toggle">
                                                             <a href="#" onclick="showPage(this.id)" id="<?= $n['id_name']; ?>">
                                                                 <span class="item-name"><?= $n['name']; ?></span>
                                                             </a>
                                                         </li>
+                                                    <?php endif; ?>
                                                 <?php
                                                     endif;
                                                 endforeach;
