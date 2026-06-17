@@ -64,6 +64,7 @@ class Productmodel extends CI_Model
         $sql="
 					SELECT  
 					A.no_of_days,A.product_id,A.size,A.name,A.economic,A.reorder,A.max_level,A.status,A.repeated,A.row_mat_puc,A.details,A.con_mat_puc,
+					A.product_type,A.hsn_code,A.sgst,A.cgst,A.igst,A.brand,A.purchase_rate,A.sales_rate,
 					B.name as cat,
 					C.name as unit
 					FROM product as A 

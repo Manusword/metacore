@@ -159,8 +159,14 @@ $(document).ready(function(e) {
 			var size=$('#size').val();
 
 			var is_repeated=$('#is_repeated').val();if(is_repeated==''){$('#is_repeated').focus(); fun_message('warning','Warning','Select is_repeated','toast-bottom-right'); return false;}
-			var row_mat_puc=$('#row_mat_puc').val();if(row_mat_puc==''){$('#row_mat_puc').focus();fun_message('warning','Warning','Select row_mat_puc','toast-bottom-right');return false;}
-			var con_mat_puc=$('#con_mat_puc').val();if(con_mat_puc==''){$('#con_mat_puc').focus(); fun_message('warning','Warning','Select con_mat_puc','toast-bottom-right'); return false;}
+			var product_type=$('#product_type').val();if(product_type==''){$('#product_type').focus();fun_message('warning','Warning','Select Product Type','toast-bottom-right');return false;}
+			var hsn_code=$('#hsn_code').val();
+			var brand=$('#brand').val();
+			var purchase_rate=$('#purchase_rate').val();
+			var sales_rate=$('#sales_rate').val();
+			var cgst=$('#cgst').val();
+			var sgst=$('#sgst').val();
+			var igst=$('#igst').val();
 			var active=$('#active').val();
 			
 			 
@@ -184,8 +190,14 @@ $(document).ready(function(e) {
 								  
 								  size:size,
 								  is_repeated:is_repeated,
-								  row_mat_puc:row_mat_puc,
-								  con_mat_puc:con_mat_puc,
+								  product_type:product_type,
+								  hsn_code:hsn_code,
+								  brand:brand,
+								  purchase_rate:purchase_rate,
+								  sales_rate:sales_rate,
+								  cgst:cgst,
+								  sgst:sgst,
+								  igst:igst,
 								  
 								  unit1:unit1,
 								  active:active,

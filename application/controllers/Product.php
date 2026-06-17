@@ -116,8 +116,17 @@ class Product extends CI_Controller {
 		if(isset($_REQUEST['active'])){$active=$_REQUEST['active'];}else{$active='';}	
 		if(isset($_REQUEST['size'])){$size=$_REQUEST['size'];}else{$size='';}	
 		if(isset($_REQUEST['is_repeated'])){$is_repeated=$_REQUEST['is_repeated'];}else{$is_repeated='';}	
-		if(isset($_REQUEST['row_mat_puc'])){$row_mat_puc=$_REQUEST['row_mat_puc'];}else{$row_mat_puc='';}	
-		if(isset($_REQUEST['con_mat_puc'])){$con_mat_puc=$_REQUEST['con_mat_puc'];}else{$con_mat_puc='';}	
+		if(isset($_REQUEST['product_type'])){$product_type=$_REQUEST['product_type'];}else{$product_type='Other';}	
+		if(isset($_REQUEST['hsn_code'])){$hsn_code=$_REQUEST['hsn_code'];}else{$hsn_code='';}	
+		if(isset($_REQUEST['sgst'])){$sgst=$_REQUEST['sgst'];}else{$sgst=0.00;}	
+		if(isset($_REQUEST['cgst'])){$cgst=$_REQUEST['cgst'];}else{$cgst=0.00;}	
+		if(isset($_REQUEST['igst'])){$igst=$_REQUEST['igst'];}else{$igst=0.00;}	
+		if(isset($_REQUEST['brand'])){$brand=$_REQUEST['brand'];}else{$brand='';}	
+		if(isset($_REQUEST['purchase_rate'])){$purchase_rate=$_REQUEST['purchase_rate'];}else{$purchase_rate=0.00;}	
+		if(isset($_REQUEST['sales_rate'])){$sales_rate=$_REQUEST['sales_rate'];}else{$sales_rate=0.00;}	
+		
+		$row_mat_puc = ($product_type === 'RM') ? 1 : 0;
+		$con_mat_puc = ($product_type === 'Consumable') ? 1 : 0;
 		
 		
 		
@@ -147,6 +156,14 @@ class Product extends CI_Controller {
 							  'repeated'=>"$is_repeated",
 							  'row_mat_puc'=>"$row_mat_puc",
 							  'con_mat_puc'=>"$con_mat_puc",
+							  'product_type'=>"$product_type",
+							  'hsn_code'=>"$hsn_code",
+							  'sgst'=>"$sgst",
+							  'cgst'=>"$cgst",
+							  'igst'=>"$igst",
+							  'brand'=>"$brand",
+							  'purchase_rate'=>"$purchase_rate",
+							  'sales_rate'=>"$sales_rate",
 							  
 							  'save_by'=>"$login_username",
 							  'save_date'=>"$today",
@@ -191,6 +208,14 @@ class Product extends CI_Controller {
 							  'repeated'=>"$is_repeated",
 							  'row_mat_puc'=>"$row_mat_puc",
 							  'con_mat_puc'=>"$con_mat_puc",
+							  'product_type'=>"$product_type",
+							  'hsn_code'=>"$hsn_code",
+							  'sgst'=>"$sgst",
+							  'cgst'=>"$cgst",
+							  'igst'=>"$igst",
+							  'brand'=>"$brand",
+							  'purchase_rate'=>"$purchase_rate",
+							  'sales_rate'=>"$sales_rate",
 							  
 							  'update_by'=>"$login_username",
 							  'update_date'=>"$today",

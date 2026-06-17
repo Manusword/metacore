@@ -197,11 +197,11 @@
 /* Make top navigation bar menu items compact for ERP departments */
 .layout-horizontal-bar .header-topnav .topnav a,
 .layout-horizontal-bar .header-topnav .topnav label {
-    padding: 10px 5px !important;
+    padding: 10px 4px !important;
     font-size: 11px !important;
     font-weight: 600 !important;
     color: #2b303a !important;
-    height: 44px !important;
+    height: 40px !important;
     transition: all 0.25s ease !important;
     position: relative;
     letter-spacing: 0.1px;
@@ -209,12 +209,23 @@
 
 .layout-horizontal-bar .header-topnav .topnav ul.menu > li > div > a,
 .layout-horizontal-bar .header-topnav .topnav ul.menu > li > div > div {
-    margin: 0 4px !important;
-    height: 44px !important;
+    margin: 0 2px !important;
+    height: 40px !important;
 }
 
 .layout-horizontal-bar .header-topnav .topnav ul.menu {
-    height: 44px !important;
+    height: auto !important;
+    display: block !important;
+}
+
+.layout-horizontal-bar .header-topnav .topnav ul.menu > li {
+    position: relative !important;
+    display: inline-block !important;
+}
+
+.layout-horizontal-bar .header-topnav .topnav ul.menu > li > div,
+.layout-horizontal-bar .header-topnav .topnav ul.menu > li > div > div {
+    position: relative !important;
 }
 
 .layout-horizontal-bar .header-topnav {
@@ -223,6 +234,27 @@
     border-top: 2px solid #e37209 !important; /* Elegant orange top bar */
     border-bottom: 1px solid #eef0f3 !important;
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02) !important;
+    height: auto !important;
+}
+
+/* Hide navigation icons on smaller screens to fit all 19 menus in a single row */
+@media (max-width: 1400px) {
+    .layout-horizontal-bar .header-topnav .topnav .nav-icon {
+        display: none !important;
+    }
+}
+
+/* Push down content dynamically if layout wraps on small screens */
+@media (max-width: 1200px) {
+    .layout-horizontal-bar .main-content-wrap {
+        margin-top: 152px !important;
+    }
+}
+
+@media (max-width: 991px) {
+    .layout-horizontal-bar .main-content-wrap {
+        margin-top: 194px !important;
+    }
 }
 
 .layout-horizontal-bar .header-topnav .topnav ul li ul li a {
@@ -233,7 +265,7 @@
 }
 
 .layout-horizontal-bar .header-topnav .topnav ul ul {
-    top: 44px !important;
+    top: 40px !important;
     border: 1px solid #eef0f3 !important;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08) !important;
     border-radius: 6px !important;

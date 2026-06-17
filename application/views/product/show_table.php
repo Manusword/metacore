@@ -15,8 +15,11 @@
                     <th>Unit</th>
                     <th>Size</th>
                     <th>Repeated</th>
-                    <th>Row Matrial ?</th>
-                    <th>Consumable ?</th>
+                    <th>Product Type</th>
+                    <th>HSN Code</th>
+                    <th>Brand</th>
+                    <th>GST% (C/S/I)</th>
+                    <th>Rates (P/S)</th>
                     <th>ID</th>
                     <th>Edit / Ledger</th>
             </tr>
@@ -49,12 +52,33 @@
                             <?php  if(isset($r['repeated'])){if($r['repeated']=='0'){?><span class="badge badge-danger">NO</span> <?php }}?>
                         </td>
                         <td>
-                            <?php  if(isset($r['row_mat_puc'])){if($r['row_mat_puc']=='1'){?><span class="badge badge-success">Yes</span> <?php }}?>
-                            <?php  if(isset($r['row_mat_puc'])){if($r['row_mat_puc']=='0'){?><span class="badge badge-danger">NO</span> <?php }}?>
+                            <?php 
+                            $pt = isset($r['product_type']) ? $r['product_type'] : '';
+                            if ($pt === 'RM') {
+                                echo '<span class="badge badge-primary">RM</span>';
+                            } elseif ($pt === 'Consumable') {
+                                echo '<span class="badge badge-warning" style="color: white !important;">Consumable</span>';
+                            } else {
+                                echo '<span class="badge badge-secondary">Other</span>';
+                            }
+                            ?>
+                        </td>
+                        <td><?php if(isset($r['hsn_code'])) echo $r['hsn_code'];?></td>
+                        <td><?php if(isset($r['brand'])) echo $r['brand'];?></td>
+                        <td>
+                            <?php 
+                            $cgst = isset($r['cgst']) ? $r['cgst'] : 0;
+                            $sgst = isset($r['sgst']) ? $r['sgst'] : 0;
+                            $igst = isset($r['igst']) ? $r['igst'] : 0;
+                            echo "$cgst% / $sgst% / $igst%";
+                            ?>
                         </td>
                         <td>
-                            <?php  if(isset($r['con_mat_puc'])){if($r['con_mat_puc']=='1'){?><span class="badge badge-success">Yes</span> <?php }}?>
-                            <?php  if(isset($r['con_mat_puc'])){if($r['con_mat_puc']=='0'){?><span class="badge badge-danger">NO</span> <?php }}?>
+                            <?php 
+                            $p_rate = isset($r['purchase_rate']) ? $r['purchase_rate'] : 0;
+                            $s_rate = isset($r['sales_rate']) ? $r['sales_rate'] : 0;
+                            echo "P: $p_rate / S: $s_rate";
+                            ?>
                         </td>
                         <td><?php if(isset($r['product_id'])){echo $r['product_id'];}?></td>
                         <td>

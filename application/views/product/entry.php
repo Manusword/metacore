@@ -80,40 +80,43 @@
                                           </div>
                                           
                                           
-                                          <div class="col-md-6">
-                                                <label >Size in nos. (Eg: 0.35,1.350) mm</label>
-                                                <input type="number" class="form-control"   name="size" id="size" required  autocomplete="off" value="<?php if(isset($res2[0]['size']))echo $res2[0]['size'];?>">
-                                          </div>
-                                          
-                                        
-                                          <div class="col-md-6">
-                                                    <label >Select Unit</label>
-                                                    <select class="form-control"  name="unit" id="unit1">
-                                                          <option  <?php if(isset($res2[0]['unit_id'])){if($res2[0]['unit_id']==''){echo "selected";}}?>  value="">Select</option>
-                                                            <?Php 
-                                                              foreach($unit as $c)
-                                                              {
-                                                                ?>
-                                                                  <option 
-                                                                  <?php 
-                                                                  if(isset($selected_unit))
-                                                                  {
-                                                                    if($selected_unit==$c['unit_id']){echo "selected";}
-                                                                  }
-                                                                  else
-                                                                  {
-                                                                    if(isset($res2[0]['unit_id'])){if($res2[0]['unit_id']==$c['unit_id']){echo "selected";}}
-                                                                  }
-                                                                  ?> 
-                                                                  value="<?php echo $c['unit_id'];?>"><?php echo $c['name'];?>
-                                                                </option>
-                                                              <?php
-                                                              }
-                                                            ?>	
-                                                    </select>
+                                                  <div class="col-md-3">
+                                                 <label >Size in nos. (Eg: 0.35,1.350) mm</label>
+                                                 <input type="number" class="form-control"   name="size" id="size" required  autocomplete="off" value="<?php if(isset($res2[0]['size']))echo $res2[0]['size'];?>">
+                                           </div>
+                                           
+                                         
+                                           <div class="col-md-3">
+                                                     <label >Select Unit</label>
+                                                     <select class="form-control"  name="unit" id="unit1">
+                                                           <option  <?php if(isset($res2[0]['unit_id'])){if($res2[0]['unit_id']==''){echo "selected";}}?>  value="">Select</option>
+                                                             <?Php 
+                                                               foreach($unit as $c)
+                                                               {
+                                                                 ?>
+                                                                   <option 
+                                                                   <?php 
+                                                                   if(isset($selected_unit))
+                                                                   {
+                                                                     if($selected_unit==$c['unit_id']){echo "selected";}
+                                                                   }
+                                                                   else
+                                                                   {
+                                                                     if(isset($res2[0]['unit_id'])){if($res2[0]['unit_id']==$c['unit_id']){echo "selected";}}
+                                                                   }
+                                                                   ?> 
+                                                                   value="<?php echo $c['unit_id'];?>"><?php echo $c['name'];?>
+                                                                 </option>
+                                                               <?php
+                                                               }
+                                                             ?>	
+                                                     </select>
                                             </div>
                                             
-                                            
+                                            <div class="col-md-3">
+                                                 <label >Brand / Make</label>
+                                                 <input type="text" class="form-control" name="brand" id="brand" autocomplete="off" value="<?php if(isset($res2[0]['brand'])) echo $res2[0]['brand'];?>">
+                                            </div>
                                             
                                             <div class="col-md-3">
                                                         <label >Is Product Repeated ?</label>
@@ -124,22 +127,31 @@
                                                         </select>
                                             </div>
                                             
+                                            <?php 
+                                            // Backwards compatibility for product type detection
+                                            $curr_type = 'Other';
+                                            if (isset($res2[0]['product_type']) && $res2[0]['product_type'] != '') {
+                                                $curr_type = $res2[0]['product_type'];
+                                            } else if (isset($res2[0]['row_mat_puc']) && $res2[0]['row_mat_puc'] == 1) {
+                                                $curr_type = 'RM';
+                                            } else if (isset($res2[0]['con_mat_puc']) && $res2[0]['con_mat_puc'] == 1) {
+                                                $curr_type = 'Consumable';
+                                            }
+                                            ?>
+                                            
                                             <div class="col-md-3">
-                                                    <label >Is it Row Matrial ?</label>
-                                                    <select class="form-control"   id="row_mat_puc">
-                                                          <option  <?php if(isset($res2[0]['row_mat_puc'])){if($res2[0]['row_mat_puc']==''){echo "selected";}}?>  value="">Select</option>
-                                                          <option <?php if(isset($res2[0]['row_mat_puc'])){if($res2[0]['row_mat_puc']=='1'){echo "selected";}}?> value="1">Yes</option>
-                                                          <option <?php if(isset($res2[0]['row_mat_puc'])){if($res2[0]['row_mat_puc']=='0'){echo "selected";}}?> value="0">No</option>
+                                                    <label >Product Type</label>
+                                                    <select class="form-control" id="product_type">
+                                                          <option value="">Select</option>
+                                                          <option <?php if($curr_type == 'RM') echo "selected";?> value="RM">Raw Material (RM)</option>
+                                                          <option <?php if($curr_type == 'Consumable') echo "selected";?> value="Consumable">Consumable</option>
+                                                          <option <?php if($curr_type == 'Other') echo "selected";?> value="Other">Other</option>
                                                     </select>
                                             </div>
 
                                             <div class="col-md-3">
-                                                    <label >Is it Consumable ?</label>
-                                                    <select class="form-control"   id="con_mat_puc">
-                                                          <option  <?php if(isset($res2[0]['con_mat_puc'])){if($res2[0]['con_mat_puc']==''){echo "selected";}}?>  value="">Select</option>
-                                                          <option <?php if(isset($res2[0]['con_mat_puc'])){if($res2[0]['con_mat_puc']=='1'){echo "selected";}}?> value="1">Yes</option>
-                                                          <option <?php if(isset($res2[0]['con_mat_puc'])){if($res2[0]['con_mat_puc']=='0'){echo "selected";}}?> value="0">No</option>
-                                                    </select>
+                                                 <label >HSN Code</label>
+                                                 <input type="text" class="form-control" name="hsn_code" id="hsn_code" autocomplete="off" value="<?php if(isset($res2[0]['hsn_code'])) echo $res2[0]['hsn_code'];?>">
                                             </div>
                                             
                                             <div class="col-md-3">
@@ -150,6 +162,31 @@
                                                       <option  <?php if(isset($res2[0]['status'])){if($res2[0]['status']=='Pending'){echo "selected";}}?> value="Pending">Pending</option>
                                                       <option  <?php if(isset($res2[0]['status'])){if($res2[0]['status']=='Banned'){echo "selected";}}?> value="Banned">Banned</option>
                                                   </select>
+                                            </div>
+
+                                            <div class="col-md-3">
+                                                 <label >Purchase Rate</label>
+                                                 <input type="number" step="0.01" class="form-control" name="purchase_rate" id="purchase_rate" autocomplete="off" value="<?php if(isset($res2[0]['purchase_rate'])) echo $res2[0]['purchase_rate'];?>">
+                                            </div>
+
+                                            <div class="col-md-3">
+                                                 <label >Sales Rate</label>
+                                                 <input type="number" step="0.01" class="form-control" name="sales_rate" id="sales_rate" autocomplete="off" value="<?php if(isset($res2[0]['sales_rate'])) echo $res2[0]['sales_rate'];?>">
+                                            </div>
+
+                                            <div class="col-md-3">
+                                                 <label >CGST (%)</label>
+                                                 <input type="number" step="0.01" class="form-control" name="cgst" id="cgst" autocomplete="off" value="<?php if(isset($res2[0]['cgst'])) echo $res2[0]['cgst'];?>">
+                                            </div>
+
+                                            <div class="col-md-3">
+                                                 <label >SGST (%)</label>
+                                                 <input type="number" step="0.01" class="form-control" name="sgst" id="sgst" autocomplete="off" value="<?php if(isset($res2[0]['sgst'])) echo $res2[0]['sgst'];?>">
+                                            </div>
+
+                                            <div class="col-md-3">
+                                                 <label >IGST (%)</label>
+                                                 <input type="number" step="0.01" class="form-control" name="igst" id="igst" autocomplete="off" value="<?php if(isset($res2[0]['igst'])) echo $res2[0]['igst'];?>">
                                             </div>
                                                
                                                
