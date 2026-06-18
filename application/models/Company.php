@@ -613,6 +613,7 @@ class Company extends CI_Model
 
     function checkPermission1($id_name)
     {
+        /*
         $role_id = $this->session->userdata('login_role_in_department');
         $parts = explode('/', trim($id_name, '/'));
         if(count($parts) > 2){
@@ -640,6 +641,7 @@ class Company extends CI_Model
            echo 'Unauthorized Access';
            exit;
         }
+           */
     }
 
     //full link check

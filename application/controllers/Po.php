@@ -25,43 +25,123 @@ class Po extends CI_Controller {
 		{
 			$product_id = $_REQUEST['product_id'];
 			$supplier_id = $_REQUEST['supplier_id'];
-			$out = $this->Pomodel->get_product_data_with_id($supplier_id,$product_id);
-			if(isset($out) and !empty($out))
-			{
-				$rate=$out[0]['rate'];
-				$rate_disc=$out[0]['disc'];
-				$rate_net=$out[0]['net'];
-				$po_entry_id=$out[0]['po_entry_id'];
-				$pcc_img_status =  $this->Pomodel->get_pcc_image_details_with_id($po_entry_id);
-				$product_unit=$out[0]['unitname_id'];
-				$hsn=$out[0]['hsn'];
-				$itemigst=$out[0]['itemigst'];
-				$itemcgst=$out[0]['itemcgst'];
-				$itemsgst=$out[0]['itemsgst'];
-				$gst_details = " SGST = $itemsgst, CGST = $itemcgst, IGST = $itemigst  ";
+			
+			// 1. Fetch supplier state and GST number to check for Rajasthan (code '08')
+			$sup_query = $this->db->query("SELECT state, gst_no FROM supplier WHERE id = ?", array($supplier_id));
+			$sup_data = $sup_query->result_array();
+			
+			$is_rajasthan = false;
+			if (!empty($sup_data)) {
+				$state = strtolower(trim($sup_data[0]['state']));
+				$gst_no = trim($sup_data[0]['gst_no']);
+				$state_code = substr($gst_no, 0, 2);
+				if ($state === 'rajasthan' || $state_code === '08') {
+					$is_rajasthan = true;
+				}
 			}
-			else
-			{
-				//if no product found in this supplier
-				$product_unit = $this->Pomodel->get_product_unit_form_last_purchase($product_id);
-				$rate = "";
-				$pcc_img_status = "NO";
-				$hsn = $this->Pomodel->get_product_hsn_form_last_purchase($product_id);
-				$itemigst2 = $this->Pomodel->get_product_igst_per_form_last_purchase($product_id);
-				$itemcgst2 = $this->Pomodel->get_product_cgst_per_form_last_purchase($product_id);
-				$itemsgst2 = $this->Pomodel->get_product_sgst_per_form_last_purchase($product_id);
-				$gst_details = " SGST = $itemsgst2, CGST = $itemcgst2, IGST = $itemigst2  ";
-				$rate_disc="";
-				$rate_net="";
-				//becouse suplier is diff
-				$itemsgst="";
-				$itemcgst="";
-				$itemigst="";
-			}//if no product found in this supplier
+			
+			// 2. Fetch product HSN, base GST percentages, purchase rate, and unit from product table
+			$prod_query = $this->db->query("SELECT hsn_code, sgst, cgst, igst, purchase_rate, unit_id FROM product WHERE product_id = ?", array($product_id));
+			$prod_data = $prod_query->result_array();
+			
+			$hsn = '';
+			$prod_sgst = 0.00;
+			$prod_cgst = 0.00;
+			$prod_igst = 0.00;
+			$base_purchase_rate = 0.00;
+			$base_unit = '';
+			
+			if (!empty($prod_data)) {
+				$hsn = $prod_data[0]['hsn_code'];
+				$prod_sgst = (float)$prod_data[0]['sgst'];
+				$prod_cgst = (float)$prod_data[0]['cgst'];
+				$prod_igst = (float)$prod_data[0]['igst'];
+				$base_purchase_rate = (float)$prod_data[0]['purchase_rate'];
+				$base_unit = $prod_data[0]['unit_id'];
+			}
+			
+			// Determine tax rates based on state
+			if ($is_rajasthan) {
+				$itemsgst = $prod_sgst;
+				$itemcgst = $prod_cgst;
+				$itemigst = 0.00;
+			} else {
+				$itemsgst = 0.00;
+				$itemcgst = 0.00;
+				$itemigst = $prod_igst;
+			}
+			
+			// 3. Last purchase from this supplier in product_invoice_entry_details
+			$this_sup_query = $this->db->query("
+				SELECT price as rate, discount as disc, net as qty, unitname_id, invoice_date as po_date, invoice_no as po_no, poid 
+				FROM product_invoice_entry_details 
+				WHERE supplier_id = ? AND product_id = ? 
+				ORDER BY details_id DESC LIMIT 1
+			", array($supplier_id, $product_id));
+			$this_sup_data = $this_sup_query->result_array();
+			
+			// Last purchase from other suppliers in product_invoice_entry_details
+			$other_sup_query = $this->db->query("
+				SELECT price as rate, discount as disc, net as qty, unitname_id, invoice_date as po_date, invoice_no as po_no, poid, supplier_id 
+				FROM product_invoice_entry_details 
+				WHERE supplier_id != ? AND product_id = ? 
+				ORDER BY details_id DESC LIMIT 1
+			", array($supplier_id, $product_id));
+			$other_sup_data = $other_sup_query->result_array();
+			
+			// Determine rate, discount, net, unit, and PCC status
+			$rate = '';
+			$rate_disc = '';
+			$rate_net = '';
+			$product_unit = '';
+			$pcc_img_status = 'NO';
+			
+			if (!empty($this_sup_data)) {
+				$rate = $this_sup_data[0]['rate'];
+				$rate_disc = $this_sup_data[0]['disc'];
+				$product_unit = $this_sup_data[0]['unitname_id'];
+				$rate_net = (float)$rate - ((float)$rate * (float)$rate_disc / 100);
+				
+				$poid = $this_sup_data[0]['poid'];
+				$pcc_img_status = ($poid > 0) ? $this->Pomodel->get_pcc_image_details_with_id($poid) : 'NO';
+			} elseif (!empty($other_sup_data)) {
+				$rate = $other_sup_data[0]['rate'];
+				$rate_disc = $other_sup_data[0]['disc'];
+				$product_unit = $other_sup_data[0]['unitname_id'];
+				$rate_net = (float)$rate - ((float)$rate * (float)$rate_disc / 100);
+				
+				$poid = $other_sup_data[0]['poid'];
+				$pcc_img_status = ($poid > 0) ? $this->Pomodel->get_pcc_image_details_with_id($poid) : 'NO';
+			} else {
+				$rate = $base_purchase_rate;
+				$rate_disc = 0.00;
+				$rate_net = $rate;
+				$product_unit = $base_unit;
+			}
+			
+			// Build Supplier information strings for row INFO field (rowdiv)
+			$this_sup_info = "This Sup: None";
+			if (!empty($this_sup_data)) {
+				$this_sup_info = "This Sup: Rs " . $this_sup_data[0]['rate'] . " (" . $this_sup_data[0]['po_date'] . ")";
+			}
+			
+			$other_sup_info = "Other: None";
+			if (!empty($other_sup_data)) {
+				$other_sup_name = '';
+				$other_sup_id = $other_sup_data[0]['supplier_id'];
+				$other_sup_data_query = $this->db->query("SELECT name FROM supplier WHERE id = ?", array($other_sup_id));
+				$other_sup_data_res = $other_sup_data_query->result_array();
+				if (!empty($other_sup_data_res)) {
+					$other_sup_name = $other_sup_data_res[0]['name'];
+				}
+				$other_sup_info = "Other: Rs " . $other_sup_data[0]['rate'] . " (" . $other_sup_data[0]['po_date'] . ", Qty: " . $other_sup_data[0]['qty'] . ", Sup: " . $other_sup_name . ")";
+			}
+			
+			$gst_details = "$this_sup_info | $other_sup_info";
 			
 			echo $product_unit.'~'.$rate.'~'.$pcc_img_status.'~'.$hsn.'~'.$gst_details.'~'.$rate_disc.'~'.$rate_net.'~'.$itemsgst.'~'.$itemcgst.'~'.$itemigst;
-		}//if isset
-	}//function close
+		}
+	}
 
 
 	//get product list form po when po invoice entry time
