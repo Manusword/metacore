@@ -1,17 +1,13 @@
 <?php 
 $design = $this->Company->design();
 $company = $this->Company->profile();
-$our_gst_no = $this->Company->our_gst_details();
-$po_print_details = $this->Company->po_print_details();
-$our_address = $this->Company->dispatch_details();
-
 
 //company details
-$com_name = $company[0]['details1'];
-$com_gst = $our_gst_no[0]['details1'];
-$com_address1 = $our_address[0]['details2'];
-$com_email = $po_print_details[0]['details3'];
-$logo = base_url().$company[0]['details3']; 
+$com_name = $company[0]['full_name'];
+$com_gst = $company[0]['gstno'];
+$com_address1 = $company[0]['full_address'];
+$com_email = $company[0]['email'];
+$logo = base_url().$company[0]['logo']; 
 
 //supplier details
 $supplier_gst=$sup[0]['gst_no'];
@@ -22,8 +18,6 @@ $sper_name=$sup[0]['con_name1'];
 $sper_mob=$sup[0]['con_mob1'];
 $semail=$sup[0]['con_email1'];
 $approved_no=$sup[0]['approved_no'];
-
-
 
 //po details
 $po_date = $this->Base->change_date_dmy($res2[0]['po_date']);
@@ -51,104 +45,139 @@ if(isset($res2[0]['remarks'])){$remarks= $res2[0]['remarks'];}else{$remarks= '';
 $po_no=$res2[0]['po_no'];
 $text_edited=$res2[0]['text_edited'];
 
-
-
+// Colors from company design
+$primary_color = !empty($company[0]['design1_bg_color']) ? $company[0]['design1_bg_color'] : '#1e293b';
+$font_color = !empty($company[0]['design1_ft_color']) ? $company[0]['design1_ft_color'] : '#ffffff';
 ?> 
 
-<style>
-
-	*{
-		border: 0;
-		box-sizing: content-box;
-		color: inherit;
-		font-family: inherit;
-		font-size: inherit;
-		font-style: inherit;
-		font-weight: inherit;
-		line-height: inherit;
-		list-style: none;
-		margin: 0;
-		padding: 0;
-		text-decoration: none;
-		vertical-align: top;
-	}
-	*[contenteditable] { border-radius: 0.25em; min-width: 1em; outline: 0; }
-	*[contenteditable] { cursor: pointer; }
-	*[contenteditable]:hover, *[contenteditable]:focus, td:hover *[contenteditable], td:focus *[contenteditable], img.hover { background: #DEF; box-shadow: 0 0 1em 0.5em #DEF; }
-	span[contenteditable] { display: inline-block; }
-	h1 { font: bold 100% sans-serif; letter-spacing: 0.5em; text-align: center; text-transform: uppercase; }
-	table { font-size: 75%; table-layout: ; width: 100%; }
-	table { border-collapse: separate; border-spacing: 2px; }
-	th, td { border-width: 1px; padding: 0.5em; position: relative; text-align: left; }
-	th, td { border-radius: 0.25em; border-style: solid; }
-	th { background: <?php if(isset($design[0]['details1'])){echo $design[0]['details1'];}else{echo "red";}?>; color:white; border-color: <?php if(isset($design[0]['details1'])){echo $design[0]['details1'];}else{echo "red";}?>; }
-	td { border-color: #DDD; }
-	
-	header { margin: 0 0 3em; }
-	header:after { clear: both; content: ""; display: table; }
-	header h1 { background: <?php if(isset($design[0]['details1'])){echo $design[0]['details1'];}else{echo "red";}?>; border-radius: 0.25em; color: #FFF; margin: 0 0 1em; padding: 0.5em 0; }
-	header address { float: right; font-size: 75%; font-style: normal; line-height: 1.25; margin: 0 1em 1em 0; }
-	header address p { margin: 0 0 0.25em; }
-	header span, header img { display: block; float: left; }
-	header span { margin: 0 0 1em 1em; max-height: 25%; max-width: 60%; position: relative; }
-	header img { max-height: 100%; max-width: 100%; }
-	header input { cursor: pointer; -ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=0)"; height: 100%; left: 0; opacity: 0; position: absolute; top: 0; width: 100%; }
-	article, article address, table.meta, table.inventory { margin: 0 0 3em; }
-	article:after { clear: both; content: ""; display: table; }
-	article h1 { clip: rect(0 0 0 0); position: absolute; }
-	article address { float: left; font-size: 125%; font-weight: bold; }
-	table.meta, table.balance { float: right; width: 36%; }
-	table.meta:after, table.balance:after { clear: both; content: ""; display: table; }
-	tr:hover .cut { opacity: 1; }
-	.maindiv{ box-shadow: none; margin: 10; width:100%;}
-	@media print 
-	{
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>Purchase Order - <?php echo $po_no; ?></title>
+	<style>
+		body {
+			color: #1e293b;
+			font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+			font-size: 11px;
+			line-height: 1.5;
+			background: #ffffff;
+			margin: 0;
+			
+		}
+		.maindiv {
+			width: 100%;
+			background: #fff;
+			padding: 0;
+		}
+		h1, h2, h3, h4, h5, h6 {
+			margin: 0;
+		}
+		.inventory-table {
+			width: 100%;
+			border-collapse: collapse;
+			margin: 20px 0;
+			font-size: 11px;
+		}
+		.inventory-table th, .inventory-table td {
+			border: 1px solid #cbd5e1;
+			padding: 8px 10px;
+			text-align: left;
+		}
+		.inventory-table th {
+			background: <?php echo $primary_color; ?> !important;
+			color: <?php echo $font_color; ?> !important;
+			font-weight: 600;
+			text-transform: uppercase;
+			font-size: 10px;
+			letter-spacing: 0.5px;
+			border: 1px solid <?php echo $primary_color; ?>;
+			-webkit-print-color-adjust: exact;
+			print-color-adjust: exact;
+		}
+		.inventory-table td {
+			color: #334155;
+		}
+		.inventory-table tr:nth-child(even) {
+			background-color: #f8fafc;
+		}
+		.meta-table {
+			width: 100%;
+			border-collapse: collapse;
+			font-size: 11px;
+		}
+		.meta-table th {
+			background: <?php echo $primary_color; ?> !important;
+			color: <?php echo $font_color; ?> !important;
+			font-weight: 600;
+			text-align: left;
+			padding: 6px 10px;
+			border: 1px solid #cbd5e1;
+			-webkit-print-color-adjust: exact;
+			print-color-adjust: exact;
+		}
+		.meta-table td {
+			padding: 6px 10px;
+			border: 1px solid #cbd5e1;
+			color: #334155;
+		}
 		
-		.maindiv{ box-shadow: none; margin-left:3%;margin-right:1%;  width:96%;}
-		span:empty { display: none; }
-		.add, .cut { display: none; }
-		th { background:white; color:black; border-color: gray; }
-		article address { float: left; font-size: 125%; font-weight: normal; }
-		header h1 { background:white; color:gray;  border-radius: 0.25em;  margin: 0 0 1em; padding: 0.5em 0; }
-		th { background:white; color:black; border-color: gray; }
-		article address { float: left; font-size: 125%; font-weight: normal; }
-		header h1 { background:white; color:gray;  border-radius: 0.25em;  margin: 0 0 1em; padding: 0.5em 0; }
-	}
-	@page { margin: 0; }
-	
-
-</style>
+		@media print {
+			body {
+				padding: 0;
+			}
+			.maindiv {
+				width: 100%;
+			}
+			.inventory-table th {
+				background: <?php echo $primary_color; ?> !important;
+				color: <?php echo $font_color; ?> !important;
+				border: 1px solid <?php echo $primary_color; ?> !important;
+				-webkit-print-color-adjust: exact;
+				print-color-adjust: exact;
+			}
+			.meta-table th {
+				background: <?php echo $primary_color; ?> !important;
+				color: <?php echo $font_color; ?> !important;
+				border: 1px solid #cbd5e1 !important;
+				-webkit-print-color-adjust: exact;
+				print-color-adjust: exact;
+			}
+		}
+		@page {
+			margin: 1.5cm 1cm 1.5cm 1cm;
+		}
+	</style>
+</head>
+<body>
 <div class="maindiv">
 	 
-		<header style="width:100%; height:100px;">
-			<h1>Purchase Order</h1>
-			<address style=' float:left;'>
-				<p style='font-size:15px; font-weight:bold'><?php if(isset($com_name))echo $com_name;?></p>
-				<p><?php if(isset($com_address1))echo $com_address1;?></p>
-				<p><?php if(isset($com_email))echo $com_email;?></p>
-				<p><?php echo $com_gst;?></p>
-			</address>
-			<span style=' float:right;'><img alt='' src='<?php echo $logo;?>' height='75'; width='75'></span>
-		</header>
-		<br>
+		<!-- Header Block -->
+		<div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid <?php echo $primary_color; ?>; padding-bottom: 15px; margin-bottom: 25px;">
+			<div style="display: flex; align-items: center; gap: 15px;">
+				<img alt='company logo' src='<?php echo $logo;?>' style="height: 70px; width: auto; object-fit: contain;">
+				<div style="text-align: left;">
+					<h2 style="font-size: 18px; font-weight: 700; color: #1e293b; margin-bottom: 4px;"><?php if(isset($com_name))echo $com_name;?></h2>
+					<p style="font-size: 11px; color: #475569; line-height: 1.4; margin: 0; max-width: 450px;"><?php if(isset($com_address1))echo $com_address1;?></p>
+					<p style="font-size: 11px; color: #475569; margin: 2px 0 0 0;"><strong>Email:</strong> <?php if(isset($com_email))echo $com_email;?> | <strong>GSTIN:</strong> <?php echo $com_gst;?></p>
+				</div>
+			</div>
+			<div style="text-align: right;">
+				<h1 style="font-size: 24px; font-weight: 800; color: <?php echo $primary_color; ?>; letter-spacing: 1px; text-transform: uppercase; margin: 0;">Purchase Order</h1>
+				<?php if(isset($text_edited) && $text_edited==2){ ?>
+					<div style="margin-top: 5px;"><span style="font-size: 11px; font-weight: 700; color: #dc2626; background: #fee2e2; padding: 2px 8px; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.5px;">Revised</span></div>
+				<?php } ?>
+			</div>
+		</div>
 
-		<article>
-			<div style="float:right;width:100%; " >
-				<address style='float:right;  font-size:12px; '>
-					To,
-					<br><?php if(isset($sname))echo $sname;?>
-					<br><?php if(isset($saddress))echo $saddress;?>			
-					<br><?php if(isset($scity))echo $scity;?>
-					<br>Contact Person Name: <?php if(isset($sper_name))echo $sper_name;?>
-					<br>Mob	: <?php if(isset($sper_mob))echo $sper_mob;?>
-					<br>Email: <?php if(isset($semail))echo $semail;?>
-					<br>GSTIN: <?php if(isset($supplier_gst))echo $supplier_gst;?>
-				</address>
-			
-				<table  style='float:left; width:300px '>
+		<!-- PO Info & Supplier Details Block -->
+		<div style="display: flex; justify-content: space-between; align-items: stretch; margin-bottom: 25px; gap: 20px; width: 100%;">
+			<!-- PO Details (Left) -->
+			<div style="flex: 1; max-width: 48%;">
+				<table class="meta-table">
 					<tr>
-						<th>P.O No.</th>
-						<td><?php if(isset($po_no))echo $po_no;?></td>
+						<th style="width: 120px;">P.O No.</th>
+						<td style="font-weight: 700; color: #0f172a;"><?php if(isset($po_no))echo $po_no;?></td>
 					</tr>
 					<tr>
 						<th>P.O Date</th>
@@ -157,12 +186,10 @@ $text_edited=$res2[0]['text_edited'];
 					<tr>
 						<th>P.O Validity</th>
 						<td><?php if(isset($po_validity))echo $po_validity;?></td>
-						
 					</tr>
 					<tr>
 						<th>Vendor Code</th>
 						<td><?php if(isset($approved_no))echo $approved_no;?></td>
-						
 					</tr>
 					<tr>
 						<th>Quotation Ref</th>
@@ -174,172 +201,181 @@ $text_edited=$res2[0]['text_edited'];
 					</tr>
 				</table>
 			</div>
-				
-			
-			
-			<table class='inventory' width="100%" style="margin-top:-50px;" border=1 >
-				<thead>
-					<tr>
-						<td style="border:none;" colspan="11"><?php if(isset($remarks))echo $remarks;?> </td>
-					</tr>
 
-					<tr>
-						<td style="border:none;" colspan="2">
-							<span style="font-size:14px; font-weight:bold;">
-								<?php if(isset($text_edited) and $text_edited==2){echo "Revised";}?>
-							</span>
-						</td>
-						<td colspan="7" style="border:none;"></td>
-						<td style="border:none;" colspan="2"></td>
-					</tr>
-							
-					<tr>
-						<th width='20px'>S.No</th>
-						<th style='width:200px'>Description of Goods</th>
-						<th>HSN</th>
-						<th>UOM</th>
-						<th>Quantity</th>
-						<th>Rate</th>
-						<th>Dis(%)</th>
-						<th>Net Rate</th>
-						<th>Amount</th>
-						<th><?php if(isset($res2[0]['gst_type'])){echo $res2[0]['gst_type'];}?></th>
-						<th>GST</th>
-					</tr>
-				</thead>
-				<tbody> 
-					<?php
-						$i=1;
-						foreach($res3 as $in)
-						{
-							$product_id = $in['product_id'];
-							$out =  $this->Productmodel->get_product_column_data_with_id($product_id,'name,details');
-							$pro_name= $out[0]['name'];
-							$product_details = $out[0]['details'];
-							
-							$unit_id = $in['unitname_id'];
-							$unit_name = $this->Base->get_unit_name_from_id($unit_id);
-							$hsn=$in['hsn'];
-							$qunt=$in['qunt'];
-							$rate=$in['rate'];
-							$dic=$in['disc'];
-							$net=$in['net'];
-							$amt=$in['amount'];
-							$goodsdetails=$in['goodsdetails'];
-							?>
-							<tr>
-								<td><?php echo $i;?></td>
-								<td style=" width:200px;">
-									<?php if(isset($pro_name)){echo $pro_name;}?>
-									<?php if(strlen($product_details)>2){ ?><br><span style="font-size:11px;">(<?php echo $product_details;?>)</span><?php }?>
-									<?php if(strlen($goodsdetails)>0){ ?><span style="font-size:11px;">(<?php echo $goodsdetails;?>)</span><?php }?>
-								</td>
-								<td><?php if(isset($hsn))echo $hsn;?></td>
-								<td><?php if(isset($unit_name))echo $unit_name;?></td>
-								<td><?php if(isset($qunt))echo $qunt;?></td>
-								<td><?php if(isset($rate))echo $rate;?></td>
-								<td><?php if(isset($dic))echo $dic;?></td>
-								<td><?php if(isset($net))echo $net;?></td>
-								<td><?php if(isset($amt))echo $amt;?></td>
-								<td><?php if($in['itemigst']>0){echo $in['itemigst'].'%';}else{echo $in['itemsgst'].'%, '.$in['itemcgst'].'%';}?></td>
-								<td><?php echo $in['itemgstrs'];?></td>
-							</tr>
-							
-							<?php
-							$i++;
-						}//loop
-					?>
-				</tbody>
-			</table>
+			<!-- Supplier Address (Right) -->
+			<div style="flex: 1; max-width: 48%; border: 1px solid #cbd5e1; border-radius: 6px; padding: 12px; background-color: #f8fafc; font-size: 11px; display: flex; flex-direction: column;">
+				<div style="font-weight: 700; color: <?php echo $primary_color; ?>; text-transform: uppercase; font-size: 10px; letter-spacing: 0.5px; margin-bottom: 6px; border-bottom: 1px solid #cbd5e1; padding-bottom: 4px;">To (Supplier Info)</div>
+				<div style="font-size: 13px; font-weight: 700; color: #0f172a; margin-bottom: 4px;"><?php if(isset($sname))echo $sname;?></div>
+				<div style="color: #475569; line-height: 1.4; flex-grow: 1;">
+					<?php if(isset($saddress))echo $saddress;?><br>
+					<?php if(isset($scity))echo $scity;?>
+				</div>
+				<div style="margin-top: 8px; font-size: 11px; border-top: 1px dashed #cbd5e1; padding-top: 8px; color: #334155; line-height: 1.5;">
+					<strong>Contact Person:</strong> <?php if(isset($sper_name))echo $sper_name;?><br>
+					<strong>Mobile:</strong> <?php if(isset($sper_mob))echo $sper_mob;?> | <strong>Email:</strong> <?php if(isset($semail))echo $semail;?><br>
+					<strong>GSTIN:</strong> <span style="font-weight: 700; color: #0f172a;"><?php if(isset($supplier_gst))echo $supplier_gst;?></span>
+				</div>
+			</div>
+		</div>
 			
-			<div style="float:left; width:50%; " >
-				<address  style=' width:100%; font-size:13px; '>
-					<table>
+		<!-- Items Table -->
+		<table class="inventory-table">
+			<thead>
+				<?php if(!empty($remarks)){ ?>
+				<tr style="background-color: #f8fafc;">
+					<td style="border: 1px solid #cbd5e1; padding: 8px 10px; font-style: italic; color: #475569;" colspan="11"><strong>Remarks/Instructions:</strong> <?php echo $remarks;?> </td>
+				</tr>
+				<?php } ?>
+						
+				<tr>
+					<th style="width: 40px; text-align: center;">S.No</th>
+					<th style="width: 250px;">Description of Goods</th>
+					<th>HSN</th>
+					<th>UOM</th>
+					<th style="text-align: right;">Quantity</th>
+					<th style="text-align: right;">Rate</th>
+					<th style="text-align: right;">Dis(%)</th>
+					<th style="text-align: right;">Net Rate</th>
+					<th style="text-align: right;">Amount</th>
+					<th style="text-align: right;"><?php if(isset($res2[0]['gst_type'])){echo $res2[0]['gst_type'];}?></th>
+					<th style="text-align: right;">GST Amount</th>
+				</tr>
+			</thead>
+			<tbody> 
+				<?php
+					$i=1;
+					foreach($res3 as $in)
+					{
+						$product_id = $in['product_id'];
+						$out =  $this->Productmodel->get_product_column_data_with_id($product_id,'name,details');
+						$pro_name= $out[0]['name'];
+						$product_details = $out[0]['details'];
+						
+						$unit_id = $in['unitname_id'];
+						$unit_name = $this->Base->get_unit_name_from_id($unit_id);
+						$hsn=$in['hsn'];
+						$qunt=$in['qunt'];
+						$rate=$in['rate'];
+						$dic=$in['disc'];
+						$net=$in['net'];
+						$amt=$in['amount'];
+						$goodsdetails=$in['goodsdetails'];
+						?>
 						<tr>
-							<td>Payment Terms</td>
-							<td><?php if(isset($payment_terms))echo $payment_terms;?></td>
-						</tr>
-						<tr>
-							<td>Delivery Schedule</td>
-							<td><?php if(isset($del_schedule))echo $del_schedule;?></td>
-						</tr>
-						<tr>
-							<td>Place Of Delivery</td>
-							<td><?php if(isset($del_place))echo $del_place;?></td>
-						</tr>
-						<tr>
-							<td>Mode Of Dispatch</td>
-							<td><?php if(isset($mod_of_dis))echo $mod_of_dis;?></td>
-						</tr>
-						<tr>
-							<td>Loading & Packing Charge</td>
-							<td><?php if(isset($loading_charge))echo $loading_charge;?></td>
+							<td style="text-align: center;"><?php echo $i;?></td>
+							<td>
+								<div style="font-weight: 600; color: #0f172a;"><?php if(isset($pro_name)){echo $pro_name;}?></div>
+								<?php if(strlen($product_details)>2){ ?><span style="font-size:10px; color: #64748b;">(<?php echo $product_details;?>)</span><?php }?>
+								<?php if(strlen($goodsdetails)>0){ ?><br><span style="font-size:10px; color: #0284c7;">(<?php echo $goodsdetails;?>)</span><?php }?>
+							</td>
+							<td><?php if(isset($hsn))echo $hsn;?></td>
+							<td><?php if(isset($unit_name))echo $unit_name;?></td>
+							<td style="text-align: right;"><?php echo (isset($qunt) && is_numeric($qunt)) ? number_format($qunt, 2) : $qunt; ?></td>
+							<td style="text-align: right;"><?php echo (isset($rate) && is_numeric($rate)) ? number_format($rate, 2) : $rate; ?></td>
+							<td style="text-align: right;"><?php echo (isset($dic) && is_numeric($dic)) ? number_format($dic, 2) : $dic; ?></td>
+							<td style="text-align: right;"><?php echo (isset($net) && is_numeric($net)) ? number_format($net, 2) : $net; ?></td>
+							<td style="text-align: right;"><?php echo (isset($amt) && is_numeric($amt)) ? number_format($amt, 2) : $amt; ?></td>
+							<td style="text-align: right;">
+								<?php 
+								if ($in['itemigst'] > 0) {
+									echo (is_numeric($in['itemigst']) ? number_format($in['itemigst'], 2) : $in['itemigst']) . '%';
+								} else {
+									echo (is_numeric($in['itemsgst']) ? number_format($in['itemsgst'], 2) : $in['itemsgst']) . '%, ' . 
+										 (is_numeric($in['itemcgst']) ? number_format($in['itemcgst'], 2) : $in['itemcgst']) . '%';
+								}
+								echo " : ";
+								echo (isset($in['itemgstrs']) && is_numeric($in['itemgstrs'])) ? number_format($in['itemgstrs'], 2) : $in['itemgstrs']; ?></td>
 						</tr>
 						
-						<tr>
-							<td>Payment In Words</td>
-							<td><?php if(isset($amount_word))echo $amount_word;?></td>
-						</tr>
-					</table>
-				</address>
-			</div>
-
-			<div style="float:right; width:50%;  " >	
-				<table width="300" style='float:right; width:300; font-size:12px;'>
-					<?php 
-					if($total_old>0)
-					{
-						?>
-							<tr>
-								<th>Total</th>
-								<td><?php if(isset($total_old))echo $total_old;?></td>
-							</tr>
-							
-							<tr>
-								<th>After <?php if($dis_per>0){echo $dis_per.' %';}?> Discount</th>
-								<td><?php if(isset($total))echo $total;?></td>
-							</tr>
 						<?php
-					}
-					else
-					{
-						?>
-							<tr>
-								<th>Total</th>
-								<td><?php if(isset($total))echo $total;?></td>
-							</tr>
-						<?php
-					}
-					?>
-					<tr>
-						<th>FFC</th>
-						<td><?php if(isset($ffc_charge))echo $ffc_charge;?></td>
+						$i++;
+					}//loop
+				?>
+			</tbody>
+		</table>
+		
+		<!-- Footer Calculations & Terms Block -->
+		<div style="display: flex; justify-content: space-between; align-items: flex-start; margin-top: 25px; gap: 20px; width: 100%;">
+			<!-- Left side: Terms & Conditions -->
+			<div style="flex: 1; max-width: 48%; border: 1px solid #cbd5e1; border-radius: 6px; padding: 12px; background-color: #f8fafc; font-size: 11px;">
+				<div style="font-weight: 700; color: <?php echo $primary_color; ?>; text-transform: uppercase; font-size: 10px; letter-spacing: 0.5px; margin-bottom: 8px; border-bottom: 1px solid #cbd5e1; padding-bottom: 4px;">Terms & Schedule</div>
+				<table style="width: 100%; border-collapse: collapse; font-size: 11px; line-height: 1.6;">
+					<tr style="border-bottom: 1px dashed #cbd5e1;">
+						<td style="padding: 5px 0; font-weight: 600; color: #475569; width: 150px;">Payment Terms</td>
+						<td style="padding: 5px 0; color: #0f172a;"><?php if(isset($payment_terms))echo $payment_terms;?></td>
 					</tr>
-					<tr>
-						<th>Total GST</th>
-						<td><?php if(isset($gstcharge))echo $gstcharge;?></td>
+					<tr style="border-bottom: 1px dashed #cbd5e1;">
+						<td style="padding: 5px 0; font-weight: 600; color: #475569;">Delivery Schedule</td>
+						<td style="padding: 5px 0; color: #0f172a;"><?php if(isset($del_schedule))echo $del_schedule;?></td>
 					</tr>
-					<tr>
-						<th>Round Off</th>
-						<td><?php if(isset($roundoff))echo $roundoff;?></td>
+					<tr style="border-bottom: 1px dashed #cbd5e1;">
+						<td style="padding: 5px 0; font-weight: 600; color: #475569;">Place Of Delivery</td>
+						<td style="padding: 5px 0; color: #0f172a;"><?php if(isset($del_place))echo $del_place;?></td>
+					</tr>
+					<tr style="border-bottom: 1px dashed #cbd5e1;">
+						<td style="padding: 5px 0; font-weight: 600; color: #475569;">Mode Of Dispatch</td>
+						<td style="padding: 5px 0; color: #0f172a;"><?php if(isset($mod_of_dis))echo $mod_of_dis;?></td>
+					</tr>
+					<tr style="border-bottom: 1px dashed #cbd5e1;">
+						<td style="padding: 5px 0; font-weight: 600; color: #475569;">Loading & Packing Charge</td>
+						<td style="padding: 5px 0; color: #0f172a;"><?php if(isset($loading_charge))echo $loading_charge;?></td>
 					</tr>
 					
+				</table>
+			</div>
+
+			<!-- Right side: Calculation Breakdown -->
+			<div style="flex: 1; max-width: 48%;">
+				<table class="meta-table">
+					<?php if($total_old > 0) { ?>
+						<tr style="border-bottom: 1px solid #cbd5e1;">
+							<th style="width: 150px;">Total</th>
+							<td style="text-align: right; font-weight: 600;"><?php echo is_numeric($total_old) ? number_format($total_old, 2) : $total_old;?></td>
+						</tr>
+						<tr style="border-bottom: 1px solid #cbd5e1;">
+							<th>After <?php if($dis_per > 0){echo $dis_per.' %';}?> Discount</th>
+							<td style="text-align: right; font-weight: 600;"><?php echo is_numeric($total) ? number_format($total, 2) : $total;?></td>
+						</tr>
+					<?php } else { ?>
+						<tr style="border-bottom: 1px solid #cbd5e1;">
+							<th style="width: 150px;">Total</th>
+							<td style="text-align: right; font-weight: 600;"><?php echo is_numeric($total) ? number_format($total, 2) : $total;?></td>
+						</tr>
+					<?php } ?>
+					<tr style="border-bottom: 1px solid #cbd5e1;">
+						<th>FFC</th>
+						<td style="text-align: right;"><?php echo is_numeric($ffc_charge) ? number_format($ffc_charge, 2) : $ffc_charge;?></td>
+					</tr>
+					<tr style="border-bottom: 1px solid #cbd5e1;">
+						<th>Total GST</th>
+						<td style="text-align: right;"><?php echo is_numeric($gstcharge) ? number_format($gstcharge, 2) : $gstcharge;?></td>
+					</tr>
+					<tr style="border-bottom: 1px solid #cbd5e1;">
+						<th>Round Off</th>
+						<td style="text-align: right;"><?php echo is_numeric($roundoff) ? number_format($roundoff, 2) : $roundoff;?></td>
+					</tr>
+					<tr style="background-color: <?php echo $primary_color; ?> !important; color: <?php echo $font_color; ?> !important;">
+						<th style="font-weight: 700; color: <?php echo $font_color; ?> !important; border: 1px solid <?php echo $primary_color; ?>;">Grand Total</th>
+						<td style="text-align: right; font-weight: 700; font-size: 13px; color: <?php echo $font_color; ?> !important; border: 1px solid <?php echo $primary_color; ?>;">₹<?php echo is_numeric($grandtotal) ? number_format($grandtotal, 2) : $grandtotal;?></td>
+					</tr>
 					<tr>
-						<th>Grand Total</th>
-						<td><?php if(isset($grandtotal))echo $grandtotal;?></td>
+						<td colspan='2' style="padding: 5px 0; color: #0f172a; font-weight: 700;">Payment In Words: <br> <?php if(isset($amount_word))echo $amount_word;?></td>
 					</tr>
 				</table>
-				</div>
-		</article>
-		
-		<div style='width:100%;  font-size:11px; border-top:solid 1px black; margin-top:-40px;'>
-			<?php if($po_print_details[0]['details5'] == 1){ echo $po_print_details[0]['details6'];}?>
-			<p align='left' style="margin-top:5px;"> Notes: <br> 
-				<?php if($po_print_details[0]['details8'] == 1){ echo $po_print_details[0]['details9'];}?>
-			</p>
+			</div>
+		</div>
+
+		<!-- Notes Block -->
+		<div style="width: 100%; font-size: 10px; border-top: 1px solid #cbd5e1; margin-top: 30px; padding-top: 15px;">
+			<div style="font-weight: 700; color: #1e293b; margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.5px;">Notes & Conditions:</div>
+			<ol style="margin: 0; padding-left: 15px; line-height: 1.6; color: #475569; list-style-type: decimal;">
+				<li>Please mention the P.O. number and date on all your invoices and future correspondence.</li>
+				<li>Material will be checked as per our standards at our works.</li>
+				<li>Attach Inspection Report / Technical Specification details with every dispatch.</li>
+				<li>Please ensure that there is no damage of the material during transportation.</li>
+			</ol>
 		</div>	
 
-
 </div>
-
-
+</body>
+</html>

@@ -54,7 +54,8 @@ class Suppliermodel extends CI_Model
     public function get_supplier_gst_type($id)
 	{
         $our = $this->Company->our_gst_details();
-        $our_state_code = $our[0]['details3'];
+        $our_gst = isset($our[0]['gstno']) ? $our[0]['gstno'] : '';
+        $our_state_code = substr($our_gst, 0, 2);
         $res = $this->get_supplier_with_id($id);
         $state_name=$res[0]['state'];
         $state_name1=explode('(',$state_name);

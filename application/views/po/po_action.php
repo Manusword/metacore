@@ -114,9 +114,40 @@
 						<div class="col-md-12">
 							<hr>
 							<h3>Product Details</h3>
+							<style>
+								/* Force absolute fallback to table elements layout */
+								.table-responsive table.table,
+								.table-responsive table.table thead,
+								.table-responsive table.table tbody,
+								.table-responsive table.table tr,
+								.table-responsive table.table th,
+								.table-responsive table.table td {
+									float: none !important;
+									position: static !important;
+									width: auto !important;
+								}
+								.table-responsive table.table {
+									display: table !important;
+									width: 100% !important;
+									border-collapse: collapse !important;
+								}
+								.table-responsive table.table thead {
+									display: table-header-group !important;
+								}
+								.table-responsive table.table tbody {
+									display: table-row-group !important;
+								}
+								.table-responsive table.table tr {
+									display: table-row !important;
+								}
+								.table-responsive table.table th,
+								.table-responsive table.table td {
+									display: table-cell !important;
+								}
+							</style>
 							<div class="table-responsive">
 								<table class="table table-bordered">
-									<thead style="font-size:12px;background-color:<?php echo $this->Company->table_bg_color();?>; color:<?php echo $this->Company->table_ft_color();?>;">
+									<thead>
 										<tr>
 											<th>#</th>
 											<th>Product</th>
