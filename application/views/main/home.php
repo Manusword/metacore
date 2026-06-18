@@ -510,16 +510,11 @@
 		var newFields = document.getElementById(readrootjr).cloneNode(true);
 		newFields.id = 'jr'+counterjr;
 		newFields.style.display = 'block';
-		var newField = newFields.childNodes;
-		for (var i=0;i<newField.length;i++) 
-		{
-			
-			var theId = newField[i].id;
-			
-			if (theId)
-			{
-				newField[i].id = theId + counterjr;
-			}
+		
+		// Find all descendants that have an ID and append counterjr
+		var allElements = newFields.querySelectorAll('[id]');
+		for (var i = 0; i < allElements.length; i++) {
+			allElements[i].id = allElements[i].id + counterjr;
 		}
 		
 		var insertHere = document.getElementById(writerootjr);

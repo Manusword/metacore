@@ -1,6 +1,54 @@
         
 
         <!-- ============ Body content start ============= -->
+        <style>
+        .po-item-row {
+            margin-bottom: 15px !important;
+            padding: 12px 10px 12px 55px !important;
+            border: 1px solid #d1d5db !important;
+            border-radius: 6px !important;
+            background-color: #fafafa !important;
+            position: relative !important;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05) !important;
+            display: flex !important;
+            flex-wrap: wrap !important;
+            gap: 12px 8px !important;
+            align-items: flex-start !important;
+            transition: all 0.25s ease;
+        }
+        .po-item-row:hover {
+            border-color: #e37209 !important;
+            box-shadow: 0 4px 12px rgba(227, 114, 9, 0.08) !important;
+        }
+        .po-item-row:nth-child(even) {
+            background-color: #f8fafc !important;
+        }
+        .po-item-row[style*="display: none"], .po-item-row[style*="display:none"] {
+            display: none !important;
+        }
+        .po-item-row .btn-danger, .po-item-row .btn-info {
+            position: absolute !important;
+            left: 8px !important;
+            top: 25px !important;
+            margin-top: 0 !important;
+        }
+        .po-item-row input, .po-item-row select {
+            margin: 0 !important;
+        }
+        .po-input-group {
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: flex-start !important;
+        }
+        .po-input-label {
+            font-size: 10px !important;
+            color: #64748b !important;
+            font-weight: 700 !important;
+            margin-bottom: 4px !important;
+            text-transform: uppercase !important;
+            letter-spacing: 0.5px !important;
+        }
+        </style>
         <div class="main-content">
                 <div class="breadcrumb">
                     <h1>Purchase Order</h1>
@@ -121,22 +169,6 @@
                                                                         <div class="widget-box">
                                                                             <div class="widget-content nopadding"><!------------From start------------>
 
-                                                                                <div style=" margin-left:40px;">
-                                                                                    <input class="form-control-new" readonly  value="Description Of Goods" type="text" style=" height:30px; width:200px; border:none; background-color:#f7f7f5; margin-left:5px;" />
-                                                                                    <input class="form-control-new" readonly  value="Details" type="text" style=" height:30px; width:200px; border:none; background-color:#f7f7f5; " />
-                                                                                    <input class="form-control-new" readonly value="HSN Code" type="text" style=" height:30px; width:70px; border:none; background-color:#f7f7f5;" />
-                                                                                    <input class="form-control-new" readonly value="UOM" type="text" style=" height:30px; width:70px; border:none; background-color:#f7f7f5;" />
-                                                                                    <input class="form-control-new" readonly  value="Quantity"  type="text" style=" height:30px; width:70px;border:none; background-color:#f7f7f5;" />
-                                                                                    <input class="form-control-new" readonly value="Rate" type="text" style=" height:30px; width:100px; border:none; background-color:#f7f7f5;" />
-                                                                                    <input class="form-control-new" readonly value="Disc. %" type="text" style=" height:30px; width:70px;margin-left:5px; border:none; background-color:#f7f7f5;" />
-                                                                                    <input class="form-control-new" readonly value="Net Rate" type="text" style=" height:30px; width:100px;margin-left:0px; border:none; background-color:#f7f7f5;" />
-                                                                                    <input class="form-control-new" readonly value="Amount" type="text" style=" height:30px; width:100px;margin-left:0px; border:none; background-color:#f7f7f5;" />
-                                                                                    <input class="form-control-new" readonly value="SGST %" type="text" style=" height:30px; width:50px;margin-left:0px; border:none; background-color:#f7f7f5;" />
-                                                                                    <input class="form-control-new" readonly value="CGST %" type="text" style=" height:30px; width:50px;margin-left:0px; border:none; background-color:#f7f7f5;" />
-                                                                                    <input class="form-control-new" readonly value="IGST %" type="text" style=" height:30px; width:50px;margin-left:0px; border:none; background-color:#f7f7f5;" />
-                                                                                    <input class="form-control-new" readonly value="GST Amount" type="text" style=" height:30px; width:100px;margin-left:0px; border:none; background-color:#f7f7f5;" />
-                                                                                    <input class="form-control-new" readonly value="INFO" type="text" style=" height:30px; width:200px;margin-left:0px; border:none; background-color:#f7f7f5;" />
-                                                                                </div>
                                                                                 <?php 
                                                                                 //----------------------------------update case
                                                                                 if(isset($res3) and count($res3)>0)
@@ -145,12 +177,12 @@
                                                                                     foreach($res3 as $w)
                                                                                     {
                                                                                         ?>
-                                                                                        <div id="readrootjr101" style=" margin-bottom:20px; margin-top:10px;">
+                                                                                        <div id="readrootjr101" class="po-item-row" style=" margin-bottom:20px; margin-top:10px;">
                                                                                             <?php 
                                                                                                 if(!empty($w['rev_qunt']) and $w['rev_qunt']>0)
                                                                                                 {
                                                                                                     ?>
-                                                                                                    <a style="margin-top:3px;" class="btn btn-info pull-left" onClick="fun_not_delete_msg()">
+                                                                                                    <a class="btn btn-info pull-left" onClick="fun_not_delete_msg()">
                                                                                                             <i class="nav-icon i-Close-Window" style="color:white;"></i>
                                                                                                         </a>
                                                                                                     <?php
@@ -158,52 +190,93 @@
                                                                                                 else
                                                                                                 {
                                                                                                     ?>
-                                                                                                        <a style="margin-top:3px;" class="btn btn-danger pull-left"  onclick="delete_item(this.id);this.parentNode.parentNode.removeChild(this.parentNode); " id="closebutton_<?php echo $c;?>">
+                                                                                                        <a class="btn btn-danger pull-left"  onclick="delete_item(this.id);this.parentNode.parentNode.removeChild(this.parentNode); " id="closebutton_<?php echo $c;?>">
                                                                                                             <i class="nav-icon i-Close-Window" style="color:white;"></i>
                                                                                                         </a>
                                                                                                     <?php 
                                                                                                 }
                                                                                             ?>
                                                                                             <input type="hidden" name="po_details_id[]" class="po_details_id"  value="<?php if(isset($w['po_entry_details_id'])){echo $w['po_entry_details_id'];}else{echo 0;}?>" id="podetailsid_<?php echo $c;?>">
-                                                                                            <?php 
-                                                                                            if(isset($w['product_id']))
-                                                                                            {
-                                                                                                $product_id2=$w['product_id'];
-                                                                                                $product2 = $this->Productmodel->get_product_column_data_with_id($product_id2,'name');
-                                                                                                $pname = $product2[0]['name'];
-                                                                                                if(!empty($pname))
+                                                                                            <div class="po-input-group">
+                                                                                                <span class="po-input-label">Description Of Goods</span>
+                                                                                                <?php 
+                                                                                                $pname = "";
+                                                                                                if(isset($w['product_id']))
                                                                                                 {
-                                                                                                ?>
-                                                                                                    <input type="text"   style="height:33px;   width:200px; margin-left:5px; " id="goods2_<?php echo $c;?>"  class="goods2" onKeyUp="fun_get_product(this.id,'goods2_','goods_','new_po')" value="<?php echo $pname;?>"  />
-                                                                                                <?php
-                                                                                                }//product_id
-                                                                                            }//product_id
-                                                                                            ?>
-                                                                                            <input type="hidden"   style="height:33px;   width:40; " id="goods_<?php echo $c;?>"  name="goods[]" class="goods" value="<?php if(isset($w['product_id']))echo $w['product_id'];?>" />
-                                                                                            <input type="text"   style="height:33px;   width:200px; margin-left:5px; " class="goodsdetails" id="goodsdetails_<?php echo $c;?>" value="<?php if(isset($w['goodsdetails']))echo $w['goodsdetails'];?>" />
-                                                                                            <input type="text"   style="height:33px;   width:70px;  " id="hsn_<?php echo $c;?>" name="hsn[]" class="hsn" value="<?php if(isset($w['hsn']))echo $w['hsn'];?>" />
-                                                                                            <select  style="height:33px;   width:70px; " id="unitname_<?php echo $c;?>" name="unitname[]" class="unitname">
-                                                                                                <option value="">Select</option>
-                                                                                                <?Php 
-                                                                                                    foreach($unit as $n)
-                                                                                                    {
-                                                                                                        ?>
-                                                                                                            <option <?php if(isset($w['unitname_id'])){if($w['unitname_id']==$n['unit_id']){echo "selected";}}?>  value="<?php echo $n['unit_id'];?>">
-                                                                                                                <?php echo $n['name'];?>
-                                                                                                            </option>
-                                                                                                        <?php
+                                                                                                    $product_id2=$w['product_id'];
+                                                                                                    $product2 = $this->Productmodel->get_product_column_data_with_id($product_id2,'name');
+                                                                                                    if (!empty($product2)) {
+                                                                                                        $pname = $product2[0]['name'];
                                                                                                     }
+                                                                                                }
                                                                                                 ?>
-                                                                                            </select>
-                                                                                            <input type="text"   style="height:33px; width:70px; " class="qunt" id="qunt_<?php echo $c;?>" name="qunt[]" value="<?php if(isset($w['qunt']))echo $w['qunt'];?>"  onKeyUp="fun_net_total1(this.id)"/>
-                                                                                            <input type="text"   style="height:33px; width:100px; " id="rate_<?php echo $c;?>" name="rate[]" class="rate" onKeyUp="fun_net_total1(this.id)" value="<?php if(isset($w['rate']))echo $w['rate'];?>" />
-                                                                                            <input type="text"   style="height:33px; width:70px; margin-left:5px; "  id="disc_<?php echo $c;?>" name="disc[]"  class="disc" onKeyUp="fun_net_total1(this.id)"  value="<?php if(isset($w['disc']))echo $w['disc'];?>" />
-                                                                                            <input type="text"   style="height:33px; width:100px; " class="net" id="net_<?php echo $c;?>" name="net[]" value="<?php if(isset($w['net']))echo $w['net'];?>" readonly />
-                                                                                            <input type="text"   style="height:33px; width:100px; " class="total_amount" id="amount_<?php echo $c;?>" name="amount[]" value="<?php if(isset($w['amount']))echo $w['amount'];?>" readonly />
-                                                                                            <input type="text"   style="height:33px; width:50px; " class="itemsgst" id="itemsgst_<?php echo $c;?>" name="itemsgst[]" onKeyUp="fun_gst(this.id)" value="<?php if(isset($w['itemsgst']))echo $w['itemsgst'];?>" />
-                                                                                            <input type="text"   style="height:33px; width:50px; " class="itemcgst" id="itemcgst_<?php echo $c;?>" name="itemcgst[]" onKeyUp="fun_gst(this.id)" value="<?php if(isset($w['itemcgst']))echo $w['itemcgst'];?>"  />
-                                                                                            <input type="text"   style="height:33px; width:50px; " class="itemigst" id="itemigst_<?php echo $c;?>" name="itemigst[]" onKeyUp="fun_gst(this.id)" value="<?php if(isset($w['itemigst']))echo $w['itemigst'];?>"  />
-                                                                                            <input type="text"   style="height:33px; width:100px; " class="itemgstrs" id="itemgstrs_<?php echo $c;?>" name="itemgstrs[]" value="<?php if(isset($w['itemgstrs']))echo $w['itemgstrs'];?>" readonly />
+                                                                                                <input type="text"   style="height:33px;   width:200px; " id="goods2_<?php echo $c;?>"  class="goods2" onKeyUp="fun_get_product(this.id,'goods2_','goods_','new_po')" value="<?php echo $pname;?>"  />
+                                                                                            </div>
+                                                                                            <input type="hidden" id="goods_<?php echo $c;?>"  name="goods[]" class="goods" value="<?php if(isset($w['product_id']))echo $w['product_id'];?>" />
+                                                                                            <div class="po-input-group">
+                                                                                                <span class="po-input-label">Details</span>
+                                                                                                <input type="text"   style="height:33px;   width:200px; " class="goodsdetails" id="goodsdetails_<?php echo $c;?>" value="<?php if(isset($w['goodsdetails']))echo $w['goodsdetails'];?>" />
+                                                                                            </div>
+                                                                                            <div class="po-input-group">
+                                                                                                <span class="po-input-label">HSN Code</span>
+                                                                                                <input type="text"   style="height:33px;   width:70px;  " id="hsn_<?php echo $c;?>" name="hsn[]" class="hsn" value="<?php if(isset($w['hsn']))echo $w['hsn'];?>" />
+                                                                                            </div>
+                                                                                            <div class="po-input-group">
+                                                                                                <span class="po-input-label">UOM</span>
+                                                                                                <select  style="height:33px;   width:70px; " id="unitname_<?php echo $c;?>" name="unitname[]" class="unitname">
+                                                                                                    <option value="">Select</option>
+                                                                                                    <?Php 
+                                                                                                        foreach($unit as $n)
+                                                                                                        {
+                                                                                                            ?>
+                                                                                                                <option <?php if(isset($w['unitname_id'])){if($w['unitname_id']==$n['unit_id']){echo "selected";}}?>  value="<?php echo $n['unit_id'];?>">
+                                                                                                                    <?php echo $n['name'];?>
+                                                                                                                </option>
+                                                                                                            <?php
+                                                                                                        }
+                                                                                                    ?>
+                                                                                                </select>
+                                                                                            </div>
+                                                                                            <div class="po-input-group">
+                                                                                                <span class="po-input-label">Quantity</span>
+                                                                                                <input type="text"   style="height:33px; width:70px; " class="qunt" id="qunt_<?php echo $c;?>" name="qunt[]" value="<?php if(isset($w['qunt']))echo $w['qunt'];?>"  onKeyUp="fun_net_total1(this.id)"/>
+                                                                                            </div>
+                                                                                            <div class="po-input-group">
+                                                                                                <span class="po-input-label">Rate</span>
+                                                                                                <input type="text"   style="height:33px; width:100px; " id="rate_<?php echo $c;?>" name="rate[]" class="rate" onKeyUp="fun_net_total1(this.id)" value="<?php if(isset($w['rate']))echo $w['rate'];?>" />
+                                                                                            </div>
+                                                                                            <div class="po-input-group">
+                                                                                                <span class="po-input-label">Disc. %</span>
+                                                                                                <input type="text"   style="height:33px; width:70px; "  id="disc_<?php echo $c;?>" name="disc[]"  class="disc" onKeyUp="fun_net_total1(this.id)"  value="<?php if(isset($w['disc']))echo $w['disc'];?>" />
+                                                                                            </div>
+                                                                                            <div class="po-input-group">
+                                                                                                <span class="po-input-label">Net Rate</span>
+                                                                                                <input type="text"   style="height:33px; width:100px; " class="net" id="net_<?php echo $c;?>" name="net[]" value="<?php if(isset($w['net']))echo $w['net'];?>" readonly />
+                                                                                            </div>
+                                                                                            <div class="po-input-group">
+                                                                                                <span class="po-input-label">Amount</span>
+                                                                                                <input type="text"   style="height:33px; width:100px; " class="total_amount" id="amount_<?php echo $c;?>" name="amount[]" value="<?php if(isset($w['amount']))echo $w['amount'];?>" readonly />
+                                                                                            </div>
+                                                                                            <div class="po-input-group">
+                                                                                                <span class="po-input-label">SGST %</span>
+                                                                                                <input type="text"   style="height:33px; width:50px; " class="itemsgst" id="itemsgst_<?php echo $c;?>" name="itemsgst[]" onKeyUp="fun_gst(this.id)" value="<?php if(isset($w['itemsgst']))echo $w['itemsgst'];?>" />
+                                                                                            </div>
+                                                                                            <div class="po-input-group">
+                                                                                                <span class="po-input-label">CGST %</span>
+                                                                                                <input type="text"   style="height:33px; width:50px; " class="itemcgst" id="itemcgst_<?php echo $c;?>" name="itemcgst[]" onKeyUp="fun_gst(this.id)" value="<?php if(isset($w['itemcgst']))echo $w['itemcgst'];?>"  />
+                                                                                            </div>
+                                                                                            <div class="po-input-group">
+                                                                                                <span class="po-input-label">IGST %</span>
+                                                                                                <input type="text"   style="height:33px; width:50px; " class="itemigst" id="itemigst_<?php echo $c;?>" name="itemigst[]" onKeyUp="fun_gst(this.id)" value="<?php if(isset($w['itemigst']))echo $w['itemigst'];?>"  />
+                                                                                            </div>
+                                                                                            <div class="po-input-group">
+                                                                                                <span class="po-input-label">GST Amount</span>
+                                                                                                <input type="text"   style="height:33px; width:100px; " class="itemgstrs" id="itemgstrs_<?php echo $c;?>" name="itemgstrs[]" value="<?php if(isset($w['itemgstrs']))echo $w['itemgstrs'];?>" readonly />
+                                                                                            </div>
+                                                                                            <div class="po-input-group">
+                                                                                                <span class="po-input-label">INFO</span>
+                                                                                                <input type="text"   style="height:33px; width:200px;font-size:11px; " class="rowdiv" id="rowdiv_<?php echo $c;?>" readonly value="" />
+                                                                                            </div>
                                                                                         </div>        
 
                                                                                     
@@ -215,38 +288,80 @@
                                                                                 {
                                                                                     //new entry case	
                                                                                     ?>
-                                                                                    <div id="readrootjr101" style="display:;  margin-bottom:20px; margin-top:10px;">
-                                                                                        <a style="margin-top:3px;" class="btn btn-danger pull-left"  onclick="delete_item(this.id);this.parentNode.parentNode.removeChild(this.parentNode); " id="closebutton_">
+                                                                                    <div id="readrootjr101" class="po-item-row" style="display:;  margin-bottom:20px; margin-top:10px;">
+                                                                                        <a class="btn btn-danger pull-left"  onclick="delete_item(this.id);this.parentNode.parentNode.removeChild(this.parentNode); " id="closebutton_">
                                                                                         <i class="nav-icon i-Close-Window" style="color:white;"></i>
                                                                                         </a>
                                                                                         <input type="hidden" name="po_details_id[]" class="po_details_id"  value="0" id="podetailsid_">
-                                                                                        <input type="text"   style="height:33px;   width:200px; margin-left:5px; " class="goods2" id="goods2_" onKeyUp="fun_get_product(this.id,'goods2_','goods_','new_po')" />
+                                                                                        <div class="po-input-group">
+                                                                                            <span class="po-input-label">Description Of Goods</span>
+                                                                                            <input type="text"   style="height:33px;   width:200px; " class="goods2" id="goods2_" onKeyUp="fun_get_product(this.id,'goods2_','goods_','new_po')" />
+                                                                                        </div>
                                                                                         <input type="hidden"   style="height:33px;   width:40px; " id="goods_"  name="goods[]" class="goods" placeholder="P.id"  />
-                                                                                        <input type="text"   style="height:33px;   width:200px; margin-left:5px; " class="goodsdetails" id="goodsdetails_" />
-                                                                                        <input type="text"   style="height:33px;   width:70px;  " id="hsn_" name="hsn[]" class="hsn" />
-                                                                                        <select  style="height:33px;   width:70px; " id="unitname_" name="unitname[]" class="unitname">
-                                                                                            <option value="">Select</option>
-                                                                                            <?Php 
-                                                                                                foreach($unit as $c)
-                                                                                                {
-                                                                                                    ?>
-                                                                                                        <option  value="<?php echo $c['unit_id'];?>">
-                                                                                                            <?php echo $c['name'];?>
-                                                                                                        </option>
-                                                                                                    <?php
-                                                                                                }
-                                                                                            ?>
-                                                                                        </select>
-                                                                                        <input type="text"   style="height:33px; width:70px; " class="qunt" id="qunt_" name="qunt[]"  onKeyUp="fun_net_total1(this.id)"/>
-                                                                                        <input type="text"   style="height:33px; width:100px; " id="rate_" name="rate[]" class="rate" onKeyUp="fun_net_total1(this.id)" />
-                                                                                        <input type="text"   style="height:33px; width:70px; margin-left:5px; "  id="disc_" name="disc[]" value="0" class="disc" onKeyUp="fun_net_total1(this.id)"  />
-                                                                                        <input type="text"   style="height:33px; width:100px; " class="net" id="net_" name="net[]" readonly  />
-                                                                                        <input type="text"   style="height:33px; width:100px; " class="total_amount" id="amount_" name="amount[]" readonly  />
-                                                                                        <input type="text"   style="height:33px; width:50px; " class="itemsgst" id="itemsgst_" name="itemsgst[]" onKeyUp="fun_gst(this.id)"  />
-                                                                                        <input type="text"   style="height:33px; width:50px; " class="itemcgst" id="itemcgst_" name="itemcgst[]" onKeyUp="fun_gst(this.id)"  />
-                                                                                        <input type="text"   style="height:33px; width:50px; " class="itemigst" id="itemigst_" name="itemigst[]" onKeyUp="fun_gst(this.id)"  />
-                                                                                        <input type="text"   style="height:33px; width:100px; " class="itemgstrs" id="itemgstrs_" name="itemgstrs[]"  readonly />
-                                                                                        <input type="text"   style="height:33px; width:200px;font-size:11px; " class="rowdiv" id="rowdiv_"   readonly value="" />
+                                                                                        <div class="po-input-group">
+                                                                                            <span class="po-input-label">Details</span>
+                                                                                            <input type="text"   style="height:33px;   width:200px; " class="goodsdetails" id="goodsdetails_" />
+                                                                                        </div>
+                                                                                        <div class="po-input-group">
+                                                                                            <span class="po-input-label">HSN Code</span>
+                                                                                            <input type="text"   style="height:33px;   width:70px;  " id="hsn_" name="hsn[]" class="hsn" />
+                                                                                        </div>
+                                                                                        <div class="po-input-group">
+                                                                                            <span class="po-input-label">UOM</span>
+                                                                                            <select  style="height:33px;   width:70px; " id="unitname_" name="unitname[]" class="unitname">
+                                                                                                <option value="">Select</option>
+                                                                                                <?Php 
+                                                                                                    foreach($unit as $c)
+                                                                                                    {
+                                                                                                        ?>
+                                                                                                            <option  value="<?php echo $c['unit_id'];?>">
+                                                                                                                <?php echo $c['name'];?>
+                                                                                                            </option>
+                                                                                                        <?php
+                                                                                                    }
+                                                                                                ?>
+                                                                                            </select>
+                                                                                        </div>
+                                                                                        <div class="po-input-group">
+                                                                                            <span class="po-input-label">Quantity</span>
+                                                                                            <input type="text"   style="height:33px; width:70px; " class="qunt" id="qunt_" name="qunt[]"  onKeyUp="fun_net_total1(this.id)"/>
+                                                                                        </div>
+                                                                                        <div class="po-input-group">
+                                                                                            <span class="po-input-label">Rate</span>
+                                                                                            <input type="text"   style="height:33px; width:100px; " id="rate_" name="rate[]" class="rate" onKeyUp="fun_net_total1(this.id)" />
+                                                                                        </div>
+                                                                                        <div class="po-input-group">
+                                                                                            <span class="po-input-label">Disc. %</span>
+                                                                                            <input type="text"   style="height:33px; width:70px; "  id="disc_" name="disc[]" value="0" class="disc" onKeyUp="fun_net_total1(this.id)"  />
+                                                                                        </div>
+                                                                                        <div class="po-input-group">
+                                                                                            <span class="po-input-label">Net Rate</span>
+                                                                                            <input type="text"   style="height:33px; width:100px; " class="net" id="net_" name="net[]" readonly  />
+                                                                                        </div>
+                                                                                        <div class="po-input-group">
+                                                                                            <span class="po-input-label">Amount</span>
+                                                                                            <input type="text"   style="height:33px; width:100px; " class="total_amount" id="amount_" name="amount[]" readonly  />
+                                                                                        </div>
+                                                                                        <div class="po-input-group">
+                                                                                            <span class="po-input-label">SGST %</span>
+                                                                                            <input type="text"   style="height:33px; width:50px; " class="itemsgst" id="itemsgst_" name="itemsgst[]" onKeyUp="fun_gst(this.id)"  />
+                                                                                        </div>
+                                                                                        <div class="po-input-group">
+                                                                                            <span class="po-input-label">CGST %</span>
+                                                                                            <input type="text"   style="height:33px; width:50px; " class="itemcgst" id="itemcgst_" name="itemcgst[]" onKeyUp="fun_gst(this.id)"  />
+                                                                                        </div>
+                                                                                        <div class="po-input-group">
+                                                                                            <span class="po-input-label">IGST %</span>
+                                                                                            <input type="text"   style="height:33px; width:50px; " class="itemigst" id="itemigst_" name="itemigst[]" onKeyUp="fun_gst(this.id)"  />
+                                                                                        </div>
+                                                                                        <div class="po-input-group">
+                                                                                            <span class="po-input-label">GST Amount</span>
+                                                                                            <input type="text"   style="height:33px; width:100px; " class="itemgstrs" id="itemgstrs_" name="itemgstrs[]"  readonly />
+                                                                                        </div>
+                                                                                        <div class="po-input-group">
+                                                                                            <span class="po-input-label">INFO</span>
+                                                                                            <input type="text"   style="height:33px; width:200px;font-size:11px; " class="rowdiv" id="rowdiv_"   readonly value="" />
+                                                                                        </div>
                                                                                     </div>
                                                                                     <?php
                                                                                 }//if
@@ -260,38 +375,80 @@
                                                                                     <br />
                                                                                     <br />
 
-                                                                                    <div id="readrootjr" style="display:none;  margin-bottom:20px; margin-top:10px;">
-                                                                                        <a style="margin-top:3px;" class="btn btn-danger pull-left"  onclick="delete_item(this.id);this.parentNode.parentNode.removeChild(this.parentNode); " id="closebutton_">
+                                                                                    <div id="readrootjr" class="po-item-row" style="display:none;  margin-bottom:20px; margin-top:10px;">
+                                                                                        <a class="btn btn-danger pull-left"  onclick="delete_item(this.id);this.parentNode.parentNode.removeChild(this.parentNode); " id="closebutton_">
                                                                                             <i class="nav-icon i-Close-Window" style="color:white;"></i>
                                                                                         </a>
                                                                                         <input type="hidden" name="po_details_id[]"  class="po_details_id"  value="0" id="podetailsid_">
-                                                                                        <input type="text"   style="height:33px;   width:200px; margin-left:5px; "  class="goods2" id="goods2_" onKeyUp="fun_get_product(this.id,'goods2_','goods_','new_po')" />
+                                                                                        <div class="po-input-group">
+                                                                                            <span class="po-input-label">Description Of Goods</span>
+                                                                                            <input type="text"   style="height:33px;   width:200px; "  class="goods2" id="goods2_" onKeyUp="fun_get_product(this.id,'goods2_','goods_','new_po')" />
+                                                                                        </div>
                                                                                         <input type="hidden"   style="height:33px;   width:40px; " id="goods_"   name="goods[]" class="goods"  />
-                                                                                        <input type="text"   style="height:33px;   width:200px; margin-left:5px; " class="goodsdetails" id="goodsdetails_" />
-                                                                                        <input type="text"   style="height:33px;   width:70px;  " id="hsn_" name="hsn[]" class="hsn" />
-                                                                                        <select  style="height:33px;   width:70px; " id="unitname_" name="unitname[]" class="unitname">
-                                                                                            <option value="">Select</option>
-                                                                                            <?Php 
-                                                                                                foreach($unit as $c)
-                                                                                                {
-                                                                                                    ?>
-                                                                                                        <option  value="<?php echo $c['unit_id'];?>">
-                                                                                                            <?php echo $c['name'];?>
-                                                                                                        </option>
-                                                                                                    <?php
-                                                                                                }
-                                                                                            ?>
-                                                                                        </select>
-                                                                                        <input type="text"   style="height:33px; width:70px; " class="qunt" id="qunt_" name="qunt[]"  onKeyUp="fun_net_total1(this.id)"/>
-                                                                                        <input type="text"   style="height:33px; width:100px; " id="rate_" name="rate[]" class="rate" onKeyUp="fun_net_total1(this.id)" />
-                                                                                        <input type="text"   style="height:33px; width:70px; margin-left:5px; "  id="disc_" name="disc[]" class="disc" value="0" onKeyUp="fun_net_total1(this.id)"  />
-                                                                                        <input type="text"   style="height:33px; width:100px; " class="net" id="net_" name="net[]" readonly  />
-                                                                                        <input type="text"   style="height:33px; width:100px; " class="total_amount" id="amount_" name="amount[]"  readonly />
-                                                                                        <input type="text"   style="height:33px; width:50px; " class="itemsgst" id="itemsgst_" name="itemsgst[]"  onKeyUp="fun_gst(this.id)"  />
-                                                                                        <input type="text"   style="height:33px; width:50px; " class="itemcgst" id="itemcgst_" name="itemcgst[]"  onKeyUp="fun_gst(this.id)"  />
-                                                                                        <input type="text"   style="height:33px; width:50px; " class="itemigst" id="itemigst_" name="itemigst[]"  onKeyUp="fun_gst(this.id)" />
-                                                                                        <input type="text"   style="height:33px; width:100px; " class="itemgstrs" id="itemgstrs_" name="itemgstrs[]"  readonly />
-                                                                                        <input type="text"   style="height:33px; width:200px;font-size:11px; " class="rowdiv" id="rowdiv_"   readonly value="" />
+                                                                                        <div class="po-input-group">
+                                                                                            <span class="po-input-label">Details</span>
+                                                                                            <input type="text"   style="height:33px;   width:200px; " class="goodsdetails" id="goodsdetails_" />
+                                                                                        </div>
+                                                                                        <div class="po-input-group">
+                                                                                            <span class="po-input-label">HSN Code</span>
+                                                                                            <input type="text"   style="height:33px;   width:70px;  " id="hsn_" name="hsn[]" class="hsn" />
+                                                                                        </div>
+                                                                                        <div class="po-input-group">
+                                                                                            <span class="po-input-label">UOM</span>
+                                                                                            <select  style="height:33px;   width:70px; " id="unitname_" name="unitname[]" class="unitname">
+                                                                                                <option value="">Select</option>
+                                                                                                <?Php 
+                                                                                                    foreach($unit as $c)
+                                                                                                    {
+                                                                                                        ?>
+                                                                                                            <option  value="<?php echo $c['unit_id'];?>">
+                                                                                                                <?php echo $c['name'];?>
+                                                                                                            </option>
+                                                                                                        <?php
+                                                                                                    }
+                                                                                                ?>
+                                                                                            </select>
+                                                                                        </div>
+                                                                                        <div class="po-input-group">
+                                                                                            <span class="po-input-label">Quantity</span>
+                                                                                            <input type="text"   style="height:33px; width:70px; " class="qunt" id="qunt_" name="qunt[]"  onKeyUp="fun_net_total1(this.id)"/>
+                                                                                        </div>
+                                                                                        <div class="po-input-group">
+                                                                                            <span class="po-input-label">Rate</span>
+                                                                                            <input type="text"   style="height:33px; width:100px; " id="rate_" name="rate[]" class="rate" onKeyUp="fun_net_total1(this.id)" />
+                                                                                        </div>
+                                                                                        <div class="po-input-group">
+                                                                                            <span class="po-input-label">Disc. %</span>
+                                                                                            <input type="text"   style="height:33px; width:70px; "  id="disc_" name="disc[]" class="disc" value="0" onKeyUp="fun_net_total1(this.id)"  />
+                                                                                        </div>
+                                                                                        <div class="po-input-group">
+                                                                                            <span class="po-input-label">Net Rate</span>
+                                                                                            <input type="text"   style="height:33px; width:100px; " class="net" id="net_" name="net[]" readonly  />
+                                                                                        </div>
+                                                                                        <div class="po-input-group">
+                                                                                            <span class="po-input-label">Amount</span>
+                                                                                            <input type="text"   style="height:33px; width:100px; " class="total_amount" id="amount_" name="amount[]"  readonly />
+                                                                                        </div>
+                                                                                        <div class="po-input-group">
+                                                                                            <span class="po-input-label">SGST %</span>
+                                                                                            <input type="text"   style="height:33px; width:50px; " class="itemsgst" id="itemsgst_" name="itemsgst[]"  onKeyUp="fun_gst(this.id)"  />
+                                                                                        </div>
+                                                                                        <div class="po-input-group">
+                                                                                            <span class="po-input-label">CGST %</span>
+                                                                                            <input type="text"   style="height:33px; width:50px; " class="itemcgst" id="itemcgst_" name="itemcgst[]"  onKeyUp="fun_gst(this.id)"  />
+                                                                                        </div>
+                                                                                        <div class="po-input-group">
+                                                                                            <span class="po-input-label">IGST %</span>
+                                                                                            <input type="text"   style="height:33px; width:50px; " class="itemigst" id="itemigst_" name="itemigst[]"  onKeyUp="fun_gst(this.id)" />
+                                                                                        </div>
+                                                                                        <div class="po-input-group">
+                                                                                            <span class="po-input-label">GST Amount</span>
+                                                                                            <input type="text"   style="height:33px; width:100px; " class="itemgstrs" id="itemgstrs_" name="itemgstrs[]"  readonly />
+                                                                                        </div>
+                                                                                        <div class="po-input-group">
+                                                                                            <span class="po-input-label">INFO</span>
+                                                                                            <input type="text"   style="height:33px; width:200px;font-size:11px; " class="rowdiv" id="rowdiv_"   readonly value="" />
+                                                                                        </div>
 
                                                                                     </div><!--readrootjr end-->
 
